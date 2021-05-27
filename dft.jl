@@ -140,7 +140,7 @@ t_julia2 = @elapsed DFT2(vsin)
 dft1 ≈ dft2  # are they the same (within floating point error)?
 
 # ╔═╡ 418d36e3-0d7a-4b8a-aef6-ea0704e72320
-md"So the `cispi` version is the same and is **$(round(t_julia/t_julia2, sigdigits=3))x** faster."
+md"""So the `cispi` version took $(round(t_julia2, sigdigits=3)) seconds.  It gets the same result and is $(round(t_julia/t_julia2, sigdigits=3))x faster."""
 
 # ╔═╡ 485c624a-d950-46b5-8ed6-b0a100ae5008
 md"""
@@ -153,8 +153,8 @@ The first index of a DFT is typically `0` for DC so users would like to have the
 function DFT3(x::OffsetVector)
 	N = length(x)
 	# Main loop:
-	res = [sum(x[n]*cispi(-2*n*k/N) for n in 0:N-1) for k in 0:N-1]
-	OffsetVector(res, 0:N-1)
+	Hₖ = [sum(x[n]*cispi(-2*n*k/N) for n in 0:N-1) for k in 0:N-1]
+	OffsetVector(Hₖ, 0:N-1)
 end
 
 # ╔═╡ 7034ecce-8ac5-45cc-9786-9294b9c99fd9
@@ -165,6 +165,9 @@ dft3 = DFT3(vsin_0)
 
 # ╔═╡ 2e9845bc-a6ad-4b12-962f-35d1def78e64
 t_julia3 = @elapsed DFT3(vsin_0)
+
+# ╔═╡ c35ce815-f1b9-4367-9f81-b2bd51850b12
+md"""The 0-based index version took $(round(t_julia3, sigdigits=3)) seconds."""
 
 # ╔═╡ b4b92f64-276f-4bdb-8b68-23406efc774a
 md"""
@@ -254,7 +257,7 @@ md"""
 
 6. Julia supports many engineering math functions that are not available in other eccosystems. It is designed for engineers doing technical computing.
 
-7. Julia syntax is more like an engineering textbook, supporting syntax like `f(x) = 2x^2 - 5x + 7` for function definitions and `0.0:0.001:0.5` for quick `start:step:stop` range definitions.
+7. Julia syntax is more like an engineering textbook, supporting syntax like `f(x) = 2x^2 - 5x + 7` for function definitions, `0.0:0.001:0.5` for quick `start:step:stop` range definitions, and `≈` (`\approx<tab>`) for approximately equal.
 
 ### Notable differences
 
@@ -283,13 +286,14 @@ md"""
 # ╠═7be5b003-e8b4-4795-ad1e-350699b360fc
 # ╠═8350eed7-0e88-4055-8060-49bf8931c84e
 # ╠═bce85b30-df7f-4697-a9d6-2c2c281f5a4c
-# ╟─418d36e3-0d7a-4b8a-aef6-ea0704e72320
+# ╠═418d36e3-0d7a-4b8a-aef6-ea0704e72320
 # ╟─485c624a-d950-46b5-8ed6-b0a100ae5008
 # ╠═cb7a88cb-5f29-4feb-9560-e77013967dcd
 # ╠═0f771326-6994-40a3-86c8-7dc49256d634
 # ╠═7034ecce-8ac5-45cc-9786-9294b9c99fd9
 # ╠═3f6c22d2-aefd-4b3e-bdc5-09b15a02a516
 # ╠═2e9845bc-a6ad-4b12-962f-35d1def78e64
+# ╟─c35ce815-f1b9-4367-9f81-b2bd51850b12
 # ╟─b4b92f64-276f-4bdb-8b68-23406efc774a
 # ╠═3be5aa2a-92b2-4dbe-a9ff-bfafa2f6ecb0
 # ╠═470dfa78-66c8-40a7-90dd-749667244207
