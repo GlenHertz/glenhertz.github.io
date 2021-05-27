@@ -119,7 +119,7 @@ In this case we can use the `cispi` function which is the same as:
 
 $$\mathrm{cispi}(x) = \cos(\pi x) + \texttt{i} \sin(\pi x) = e^{-\texttt{i} \pi x}$$
 
-where `i` is imaginary.  `cispi(x)` is a faster version of `exp(j*pi*x)` (see [Wikipedia](https://en.wikipedia.org/wiki/Cis_(mathematics)) for more info).
+where `i` is imaginary.  `cispi(x)` is a faster version of `exp(im*pi*x)` (see [Wikipedia](https://en.wikipedia.org/wiki/Cis_(mathematics)) for more info).
 
 So let's rewrite it with `cispi`:
 """
@@ -127,7 +127,7 @@ So let's rewrite it with `cispi`:
 # ╔═╡ 2ed07614-1715-4646-a09c-c7653a0102db
 function DFT2(x)
 	N = length(x)
-	Hₖ = [sum(x[n+1]*cispi(-2*n*k/N) for n in 0:N-1) for k in 0:N-1]
+	Hₖ = [sum(x[n+1]*cispi(-2n*k/N) for n in 0:N-1) for k in 0:N-1]
 end
 
 # ╔═╡ 7be5b003-e8b4-4795-ad1e-350699b360fc
@@ -153,7 +153,7 @@ The first index of a DFT is typically `0` for DC so users would like to have the
 function DFT3(x::OffsetVector)
 	N = length(x)
 	# Main loop:
-	Hₖ = [sum(x[n]*cispi(-2*n*k/N) for n in 0:N-1) for k in 0:N-1]
+	Hₖ = [sum(x[n]*cispi(-2n*k/N) for n in 0:N-1) for k in 0:N-1]
 	OffsetVector(Hₖ, 0:N-1)
 end
 
@@ -251,7 +251,7 @@ md"""
 
 3. The `exp` function is generic in that it can accept reals, complex numbers and matrices.  In Python, for complex arguments `cmath.exp` is needed while for real arguments `math.exp` is needed (or `numpy.exp` for numpy).  Therefore it is harder for the user to write generic functions built on top of `exp`.  In Julia functions are generic with no loss in performance or additional complexity for the user.
 
-4. Julia is about **$(round(t_python/t_julia3, sigdigits=3))x** faster than Python.  Often an interative loop is the easiest to write an algorithm but if is too slow then users will try to rewrite it in a vectorized form to speed things up.  Performance isn't an issue...until it is and then requires extra time and expertise to use other plug-in libraries.
+4. Julia is about **$(round(t_python/t_julia3, sigdigits=3))x** faster than Python.  Often an interative loop is the easiest to write an algorithm but if the code is too slow then users will try to rewrite it in a vectorized form to speed things up.  Performance isn't an issue...until it is...and then requires extra time and expertise to use other plug-in libraries.
 
 5. Julia supports broadcasting generically so a function like `exp` can be distributed over a vector `x` like so `exp.(x)`.  This applies to all functions and makes for much easier development and usability.  To take the `exp` of a matrix use `exp(matrix)` (which is not the same as taking the `exp` of each element of the matrix with `exp.(matrix)`.
 
@@ -286,7 +286,7 @@ md"""
 # ╠═7be5b003-e8b4-4795-ad1e-350699b360fc
 # ╠═8350eed7-0e88-4055-8060-49bf8931c84e
 # ╠═bce85b30-df7f-4697-a9d6-2c2c281f5a4c
-# ╠═418d36e3-0d7a-4b8a-aef6-ea0704e72320
+# ╟─418d36e3-0d7a-4b8a-aef6-ea0704e72320
 # ╟─485c624a-d950-46b5-8ed6-b0a100ae5008
 # ╠═cb7a88cb-5f29-4feb-9560-e77013967dcd
 # ╠═0f771326-6994-40a3-86c8-7dc49256d634
