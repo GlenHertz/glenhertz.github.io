@@ -136,11 +136,22 @@ dft2 = DFT2(vsin)
 # ╔═╡ 8350eed7-0e88-4055-8060-49bf8931c84e
 t_julia2 = @elapsed DFT2(vsin)
 
+# ╔═╡ db8c90c4-dba7-44b1-a2d5-4ee5756667c2
+md"""
+> **Note:** Julia supports __macros__ which start with **`@`** that allow users to write a function that takes code as input and can modify it.  The **`@elapsed`** function takes the code past to it and inserts a start and stop timer around the code to measure the excecution time.
+
+Let's check that the improved function returns the same result:
+"""
+
 # ╔═╡ bce85b30-df7f-4697-a9d6-2c2c281f5a4c
-dft1 ≈ dft2  # are they the same (within floating point error)?
+dft1 ≈ dft2
 
 # ╔═╡ 418d36e3-0d7a-4b8a-aef6-ea0704e72320
-md"""So the `cispi` version took $(round(t_julia2, sigdigits=3)) seconds.  It gets the same result and is $(round(t_julia/t_julia2, sigdigits=3))x faster."""
+md"""
+> **Note:** above the `≈` operater checks for approximately equal (within floating point round-off error).  It can be typed with `\approx<tab>`.
+
+So the `cispi` version took $(round(t_julia2, sigdigits=3)) seconds.  It gets the same result and is $(round(t_julia/t_julia2, sigdigits=3))x faster.
+"""
 
 # ╔═╡ 485c624a-d950-46b5-8ed6-b0a100ae5008
 md"""
@@ -166,7 +177,7 @@ dft3 = DFT3(vsin_0)
 t_julia3 = @elapsed DFT3(vsin_0)
 
 # ╔═╡ c35ce815-f1b9-4367-9f81-b2bd51850b12
-md"""The 0-based index version took $(round(t_julia3, sigdigits=3)) seconds."""
+md"""The 0-based index version took $(round(t_julia3, sigdigits=3)) seconds which is $(round(t_julia2/t_julia3, sigdigits=3))x faster than the previous version (it actually is the same speed but there is a run-to-run noise of the computer is present)."""
 
 # ╔═╡ b4b92f64-276f-4bdb-8b68-23406efc774a
 md"""
@@ -190,13 +201,17 @@ begin
 end
 
 # ╔═╡ 74abbc3f-784e-474c-bfdc-1e19718ca6cb
-t_python = @elapsed DFT_py(vsin)  # this takes a long time to run (eg > 10 seconds)
+t_python = @elapsed dftpy = DFT_py(vsin) # this takes a long time to run (eg > 10 seconds)
+
 
 # ╔═╡ bb6d5b1c-9382-43ed-8725-c0ab1b513479
 md"""
-The Python version took $(round(t_python, sigdigits=3)) seconds.
+The Python version took $(round(t_python, sigdigits=3)) seconds.  Let's check if they are equal:
 """
 
+
+# ╔═╡ 1f084504-4f3a-4eb9-a4b9-b12b3c154497
+dftpy ≈ dft1
 
 # ╔═╡ 22de6bec-5774-40e4-9685-9347de93b21b
 md""" ### Improved Numpy Version
@@ -223,12 +238,17 @@ md"Create a numpy array from `vsin` (PyCall by default converts Julia arrays int
 vsin_numpy = PyObject(vsin)
 
 # ╔═╡ 01b86d4e-d9f2-42cb-9c8c-f52cab1f4d31
-t_numpy = @elapsed DFT_numpy(vsin_numpy) 
+t_numpy = @elapsed dftnumpy = DFT_numpy(vsin_numpy) 
 
 # ╔═╡ f0a5520a-c48d-424d-a12a-7d80f51a8071
 md"""
-The Numpy version took $(round(t_numpy, sigdigits=3)) seconds which is $(round(t_numpy/t_python, sigdigits=3))x slower than the regular Python version.
+The Numpy version took $(round(t_numpy, sigdigits=3)) seconds which is $(round(t_numpy/t_python, sigdigits=3))x slower than the regular Python version.  So the speed-up with using Numpy is only for vectorized operations.
+
+Let's check if they are equal:
 """
+
+# ╔═╡ 4bdb81af-7520-46ae-a151-90446ac4be61
+dftnumpy ≈ dftpy
 
 # ╔═╡ 2a5cdcfc-3d72-458d-8a1a-471d7e2196a9
 md"""
@@ -257,6 +277,8 @@ md"""
 6. Julia supports many engineering math functions that are not available in other eccosystems. It is designed for engineers doing technical computing.
 
 7. Julia syntax is more like an engineering textbook, supporting syntax like `f(x) = 2x^2 - 5x + 7` for function definitions, `0.0:0.001:0.5` for quick `start:step:stop` range definitions, and `≈` (`\approx<tab>`) for approximately equal.
+
+8. Julia has great Python interopability and can `import` Python packages and call them with ease.
 
 ### Notable differences
 
@@ -293,6 +315,7 @@ md"""
 # ╠═2ed07614-1715-4646-a09c-c7653a0102db
 # ╠═7be5b003-e8b4-4795-ad1e-350699b360fc
 # ╠═8350eed7-0e88-4055-8060-49bf8931c84e
+# ╟─db8c90c4-dba7-44b1-a2d5-4ee5756667c2
 # ╠═bce85b30-df7f-4697-a9d6-2c2c281f5a4c
 # ╟─418d36e3-0d7a-4b8a-aef6-ea0704e72320
 # ╟─485c624a-d950-46b5-8ed6-b0a100ae5008
@@ -301,12 +324,13 @@ md"""
 # ╠═7034ecce-8ac5-45cc-9786-9294b9c99fd9
 # ╠═3f6c22d2-aefd-4b3e-bdc5-09b15a02a516
 # ╠═2e9845bc-a6ad-4b12-962f-35d1def78e64
-# ╠═c35ce815-f1b9-4367-9f81-b2bd51850b12
+# ╟─c35ce815-f1b9-4367-9f81-b2bd51850b12
 # ╟─b4b92f64-276f-4bdb-8b68-23406efc774a
 # ╠═3be5aa2a-92b2-4dbe-a9ff-bfafa2f6ecb0
 # ╠═470dfa78-66c8-40a7-90dd-749667244207
 # ╠═74abbc3f-784e-474c-bfdc-1e19718ca6cb
 # ╟─bb6d5b1c-9382-43ed-8725-c0ab1b513479
+# ╠═1f084504-4f3a-4eb9-a4b9-b12b3c154497
 # ╟─22de6bec-5774-40e4-9685-9347de93b21b
 # ╠═c14506f3-c3f6-42a5-86f8-93812bd5e789
 # ╠═55ed8230-7ab1-41dd-9337-01b7720791ac
@@ -314,4 +338,5 @@ md"""
 # ╠═8ae5c333-0ab5-4c13-bebc-e5d7e023989d
 # ╠═01b86d4e-d9f2-42cb-9c8c-f52cab1f4d31
 # ╟─f0a5520a-c48d-424d-a12a-7d80f51a8071
+# ╠═4bdb81af-7520-46ae-a151-90446ac4be61
 # ╟─2a5cdcfc-3d72-458d-8a1a-471d7e2196a9
