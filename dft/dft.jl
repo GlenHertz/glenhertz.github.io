@@ -77,7 +77,7 @@ md"""> **Note!** Julia uses `im` for the imaginary number and by default uses `1
 # ╔═╡ 9f4a2c5f-a8b7-4fbf-93a4-2bc129ae7207
 md"### Create some test data
 
-The test data is a simle 2000 point sinusoild...nothing special."
+The test data is a simle 2000 point sinusoid...nothing special."
 
 # ╔═╡ 38c57971-eabc-4ecf-948b-ffbcffdf517d
 t = range(0, stop=1, length=2000)
@@ -169,10 +169,10 @@ So the `cispi` version took $(round(t_julia2, sigdigits=3)) seconds.  It gets th
 
 # ╔═╡ fd7807ff-3a89-499e-937e-7550979145bd
 md"""
-> **Note:** This `DFT2` function definition specifies that the input must be an `OffsetVector`.  This allows users to write generic functions that can take different types of inputs yet run different code.  So by default `DFT2` will assume it is a regular vector (or any type since it does no type checking) but if an `OffsetVector` is passed to `DFT2` then the above method will be called instead.
+> **Note:** This `DFT2` function definition specifies that the input must be an `OffsetVector`.  This allows users to write generic functions that can take different types of inputs yet run different code.  So by default `DFT2` will assume it is a regular vector (or any type since it does no type checking) but if an `OffsetVector` is passed to `DFT2` then the above method will be called instead.  Note how above the code Julia, it returns `DFT2 (generic function with 2 methods)`.
 
 
-Now let's convert vsin into a 0-based index OffsetVector:
+Now let's convert `vsin` into a 0-based index `OffsetVector`:
 """
 
 # ╔═╡ 7034ecce-8ac5-45cc-9786-9294b9c99fd9
