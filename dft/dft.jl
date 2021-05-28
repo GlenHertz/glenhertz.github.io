@@ -363,7 +363,7 @@ A few comments:
 
 2. I made many errors trying to get it to work and couldn't understand the error messages.  It turned out I had missed putting the `$` in front of a variable name in some places and it gave weird error messages that were referencing lines far away from the actual issue.  
 
-3. TCL does integer division so `1/4` equals `0` (not `0.25`).  I had to make sure to do `/double($N)` to get regular division.
+3. TCL does integer division so `1/4` equals `0` (not `0.25`).  I had to make sure to do `/double($N)` to get regular division.  These are the sorts of things that can easily cause code to break (say a user passed in an integer) in non-obvious ways and lead to long debugging sessions.  I've seen this bug in production code where the Verilog-A compiler (written in C which also does integer division) was doing `V/R` but the resistance was an integer and the programmer forgot to convert it to a real and the bug was in the field many years before it could be tracked down. 
 
 4. Basic math constants like `pi` are not available.  Had to use `acos(-1)` to get the value of `pi`.
 
