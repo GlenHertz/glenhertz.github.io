@@ -130,27 +130,11 @@ function DFT2(x)
 	Hₖ = [sum(x[n+1]*cispi(-2n*k/N) for n in 0:N-1) for k in 0:N-1]
 end
 
-# ╔═╡ 7be5b003-e8b4-4795-ad1e-350699b360fc
-dft2 = DFT2(vsin)
-
-# ╔═╡ 8350eed7-0e88-4055-8060-49bf8931c84e
-t_julia2 = @elapsed DFT2(vsin)
-
 # ╔═╡ db8c90c4-dba7-44b1-a2d5-4ee5756667c2
 md"""
 > **Note:** Julia supports __macros__ which start with **`@`** that allow users to write a function that takes code as input and can modify it.  The **`@elapsed`** function takes the code past to it and inserts a start and stop timer around the code to measure the excecution time.
 
 Let's check that the improved function returns the same result:
-"""
-
-# ╔═╡ bce85b30-df7f-4697-a9d6-2c2c281f5a4c
-dft1 ≈ dft2
-
-# ╔═╡ 418d36e3-0d7a-4b8a-aef6-ea0704e72320
-md"""
-> **Note:** above the `≈` operater checks for approximately equal (within floating point round-off error).  It can be typed with `\approx<tab>`.
-
-So the `cispi` version took $(round(t_julia2, sigdigits=3)) seconds.  It gets the same result and is $(round(t_julia/t_julia2, sigdigits=3))x faster.
 """
 
 # ╔═╡ 485c624a-d950-46b5-8ed6-b0a100ae5008
@@ -161,20 +145,44 @@ The first index of a DFT is typically `0` for DC so users would like to have the
 """
 
 # ╔═╡ 0f771326-6994-40a3-86c8-7dc49256d634
-function DFT3(x::OffsetVector)
+function DFT2(x::OffsetVector)
 	N = length(x)
 	Hₖ = [sum(x[n]*cispi(-2n*k/N) for n in 0:N-1) for k in 0:N-1]
 	OffsetVector(Hₖ, 0:N-1)
 end
 
+# ╔═╡ 7be5b003-e8b4-4795-ad1e-350699b360fc
+dft2 = DFT2(vsin)
+
+# ╔═╡ bce85b30-df7f-4697-a9d6-2c2c281f5a4c
+dft1 ≈ dft2
+
+# ╔═╡ 8350eed7-0e88-4055-8060-49bf8931c84e
+t_julia2 = @elapsed DFT2(vsin)
+
+# ╔═╡ 418d36e3-0d7a-4b8a-aef6-ea0704e72320
+md"""
+> **Note:** above the `≈` operater checks for approximately equal (within floating point round-off error).  It can be typed with `\approx<tab>`.
+
+So the `cispi` version took $(round(t_julia2, sigdigits=3)) seconds.  It gets the same result and is $(round(t_julia/t_julia2, sigdigits=3))x faster.
+"""
+
+# ╔═╡ fd7807ff-3a89-499e-937e-7550979145bd
+md"""
+> **Note:** This `DFT2` function definition specifies that the input must be an `OffsetVector`.  This allows users to write generic functions that can take different types of inputs yet run different code.  So by default `DFT2` will assume it is a regular vector (or any type since it does no type checking) but if an `OffsetVector` is passed to `DFT2` then the above method will be called instead.
+
+
+Now let's convert vsin into a 0-based index OffsetVector:
+"""
+
 # ╔═╡ 7034ecce-8ac5-45cc-9786-9294b9c99fd9
 vsin_0 = OffsetVector(vsin, 0:length(vsin)-1)
 
 # ╔═╡ 3f6c22d2-aefd-4b3e-bdc5-09b15a02a516
-dft3 = DFT3(vsin_0)
+dft3 = DFT2(vsin_0)
 
 # ╔═╡ 2e9845bc-a6ad-4b12-962f-35d1def78e64
-t_julia3 = @elapsed DFT3(vsin_0)
+t_julia3 = @elapsed DFT2(vsin_0)
 
 # ╔═╡ c35ce815-f1b9-4367-9f81-b2bd51850b12
 md"""The 0-based index version took $(round(t_julia3, sigdigits=3)) seconds which is $(round(t_julia2/t_julia3, sigdigits=3))x faster than the previous version (it actually is the same speed but there is a run-to-run noise of the computer is present)."""
@@ -397,6 +405,7 @@ md"""
 # ╟─485c624a-d950-46b5-8ed6-b0a100ae5008
 # ╠═cb7a88cb-5f29-4feb-9560-e77013967dcd
 # ╠═0f771326-6994-40a3-86c8-7dc49256d634
+# ╟─fd7807ff-3a89-499e-937e-7550979145bd
 # ╠═7034ecce-8ac5-45cc-9786-9294b9c99fd9
 # ╠═3f6c22d2-aefd-4b3e-bdc5-09b15a02a516
 # ╠═2e9845bc-a6ad-4b12-962f-35d1def78e64
