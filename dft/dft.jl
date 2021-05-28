@@ -363,13 +363,15 @@ A few comments:
 
 2. I made many errors trying to get it to work and couldn't understand the error messages.  It turned out I had missed putting the `$` in front of a variable name in some places and it gave weird error messages that were referencing lines far away from the actual issue.  
 
-3. TCL does integer division so I had to make sure to do `/double($N)`.
+3. TCL does integer division so `1/4` equals `0` (not `0.25`).  I had to make sure to do `/double($N)` to get regular division.
 
 4. Basic math constants like `pi` are not available.  Had to use `acos(-1)` to get the value of `pi`.
 
 5. Without complex number support using the output of the DFT is going to be very painful as functions like `abs` would need to be rewritten for complex numbers.  There are TCL libraries out there for complex numbers but they are typically not shipped/used with EDA software.
 
-6. The run time of 3.858 seconds was $(round(3.858/t_julia3, sigdigits=3))x slower than Julia and $(round(t_python/3.858, sigdigits=3))x faster than Python.  A bit surprising to say the least that it was faster than Python.  Could converting complex `exp` to `sin` and `cos` be a lot faster?  I suspect so but am not sure.
+6. TCL doesn't have math as part of its syntax.  Math syntax is handled specifically by the `expr` function.  I don't know of a way to use my newly created `dft` function along with the `expr` function so I can use it in other math expressions.  User defined math functions in TCL are not composable.
+
+7. The run time of 3.858 seconds was $(round(3.858/t_julia3, sigdigits=3))x slower than Julia and $(round(t_python/3.858, sigdigits=3))x faster than Python.  A bit surprising to say the least that it was faster than Python.  Could converting complex `exp` to `sin` and `cos` be a lot faster?  I suspect so but am not sure.
 """
 
 # ╔═╡ 0532bbb3-428e-4d32-876e-af92c1c7bb01
