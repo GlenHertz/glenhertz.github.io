@@ -117,11 +117,11 @@ Julia has optimized functions that are common in engineering but are not found i
 
 In this case we can use the `cispi` function which is the same as:
 
-$$\mathrm{cispi}(x) = \cos(\pi x) + \texttt{i} \sin(\pi x) = e^{-\texttt{i} \pi x}$$
+$$\mathrm{cispi}(x) = \cos(\pi x) + \texttt{i} \sin(\pi x) = e^{\texttt{i} \pi x}$$
 
 where `i` is imaginary.  `cispi(x)` is a faster version of `exp(im*pi*x)` (see [Wikipedia](https://en.wikipedia.org/wiki/Cis_(mathematics)) for more info).
 
-So let's rewrite it with `cispi`:
+So let's rewrite the DFT with `cispi`:
 """
 
 # ╔═╡ 2ed07614-1715-4646-a09c-c7653a0102db
@@ -152,7 +152,6 @@ The first index of a DFT is typically `0` for DC so users would like to have the
 # ╔═╡ 0f771326-6994-40a3-86c8-7dc49256d634
 function DFT3(x::OffsetVector)
 	N = length(x)
-	# Main loop:
 	Hₖ = [sum(x[n]*cispi(-2n*k/N) for n in 0:N-1) for k in 0:N-1]
 	OffsetVector(Hₖ, 0:N-1)
 end
@@ -218,7 +217,7 @@ begin
 end
 
 # ╔═╡ f4223f65-7c80-46ab-99ab-4736a2909517
-md"Create a numpy array from `vsin`:"
+md"Create a numpy array from `vsin` (PyCall by default converts Julia arrays into Numpy arrays):"
 
 # ╔═╡ 8ae5c333-0ab5-4c13-bebc-e5d7e023989d
 vsin_numpy = PyObject(vsin)
@@ -251,7 +250,7 @@ md"""
 
 3. The `exp` function is generic in that it can accept reals, complex numbers and matrices.  In Python, for complex arguments `cmath.exp` is needed while for real arguments `math.exp` is needed (or `numpy.exp` for numpy).  Therefore it is harder for the user to write generic functions built on top of `exp`.  In Julia functions are generic with no loss in performance or additional complexity for the user.
 
-4. Julia is about **$(round(t_python/t_julia3, sigdigits=3))x** faster than Python.  Often an interative loop is the easiest to write an algorithm but if the code is too slow then users will try to rewrite it in a vectorized form to speed things up.  Performance isn't an issue...until it is...and then requires extra time and expertise to use other plug-in libraries.
+4. In this case, Julia is **$(round(t_python/t_julia3, sigdigits=3))x** faster than Python.  Often an interative loop is the easiest to write an algorithm but if the code is too slow then Python users will try to rewrite the algorithm in a vectorized form to speed things up with Numpy.  Performance isn't an issue...until it is...and then requires extra time and expertise to use other plug-in libraries.
 
 5. Julia supports broadcasting generically so a function like `exp` can be distributed over a vector `x` like so `exp.(x)`.  This applies to all functions and makes for much easier development and usability.  To take the `exp` of a matrix use `exp(matrix)` (which is not the same as taking the `exp` of each element of the matrix with `exp.(matrix)`.
 
@@ -264,6 +263,15 @@ md"""
 1. Julia uses 1-based indexing; Python uses 0-based indexing
 
 2. Julia uses inclusive ranges (`1:10` is 1 to 10); Python uses exclusive ranges (`range(1,11)` is 1 to 10)
+
+## Appendix
+
+1. This site was written in [Pluto](https://github.com/fonsp/Pluto.jl) which is a Julia environment in a web browser.
+
+2. MIT has many good university level courses using Julia and Pluto on their [Computational Thinking](https://computationalthinking.mit.edu/Spring21/) course.  It is really a game changer for someone learning technical computing in that it gives students an interactive notebook where they can interact with the mathematics and get a good understanding of how the algorithms work.  
+
+3. If you have any comments or suggestions, please let me know at `glen` "dot" `hertz` at that popular Gmail site.
+
 """
 
 # ╔═╡ Cell order:
@@ -293,7 +301,7 @@ md"""
 # ╠═7034ecce-8ac5-45cc-9786-9294b9c99fd9
 # ╠═3f6c22d2-aefd-4b3e-bdc5-09b15a02a516
 # ╠═2e9845bc-a6ad-4b12-962f-35d1def78e64
-# ╟─c35ce815-f1b9-4367-9f81-b2bd51850b12
+# ╠═c35ce815-f1b9-4367-9f81-b2bd51850b12
 # ╟─b4b92f64-276f-4bdb-8b68-23406efc774a
 # ╠═3be5aa2a-92b2-4dbe-a9ff-bfafa2f6ecb0
 # ╠═470dfa78-66c8-40a7-90dd-749667244207
@@ -302,7 +310,7 @@ md"""
 # ╟─22de6bec-5774-40e4-9685-9347de93b21b
 # ╠═c14506f3-c3f6-42a5-86f8-93812bd5e789
 # ╠═55ed8230-7ab1-41dd-9337-01b7720791ac
-# ╠═f4223f65-7c80-46ab-99ab-4736a2909517
+# ╟─f4223f65-7c80-46ab-99ab-4736a2909517
 # ╠═8ae5c333-0ab5-4c13-bebc-e5d7e023989d
 # ╠═01b86d4e-d9f2-42cb-9c8c-f52cab1f4d31
 # ╟─f0a5520a-c48d-424d-a12a-7d80f51a8071
