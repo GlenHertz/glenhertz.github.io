@@ -271,7 +271,7 @@ md"""
 
 ### Pros for Python:
 
-1. Some users may like `0-based` array indexing better if coming from a `C` background.
+1. Some users may like `0-based` array indexing better if coming from a C, TCL, SKILL, or Perl background.
 
 ### Pros for Julia:
 
@@ -361,7 +361,7 @@ A few comments:
 
 1. It was very difficult to write this function.  TCL doesn't support complex numbers and the code in TCL is unlike any math textbook.  Instead of a 2 line function it is 14 lines and is much less usable.
 
-2. I made many errors trying to get it to work and couldn't understand the error messages.  It turned out I had missed putting the `$` in front of a variable name in some places and it gave weird error messages.  
+2. I made many errors trying to get it to work and couldn't understand the error messages.  It turned out I had missed putting the `$` in front of a variable name in some places and it gave weird error messages that were referencing lines far away from the actual issue.  
 
 3. TCL does integer division so I had to make sure to do `/double($N)`.
 
