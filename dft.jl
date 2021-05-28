@@ -285,7 +285,82 @@ md"""
 1. Julia uses 1-based indexing; Python uses 0-based indexing
 
 2. Julia uses inclusive ranges (`1:10` is 1 to 10); Python uses exclusive ranges (`range(1,11)` is 1 to 10)
+"""
 
+# ╔═╡ e62a71a3-7c54-4390-9263-5e6e55e70718
+md"""
+## TCL version
+
+TCL is very popular in EDA so let's write the DFT function in TCL:
+
+```tcl
+proc dft {x} {
+    # TCL doesn't support complex numbers so will keep them separate and use Euler's formula
+    set N [llength $x]
+    set pi [expr "acos(-1)"]
+    set Hk {}
+    for {set k 0} {$k < $N} {incr k} {
+        set sum_real 0.0
+        set sum_imag 0.0
+        for {set n 0} {$n < $N} {incr n} {
+            set xn [lindex $x $n]
+            set real [expr {$xn*cos(-2*$pi*$n*$k/double($N))}]
+            set imag [expr {$xn*sin(-2*$pi*$n*$k/double($N))}]
+            set sum_real [expr {$sum_real + $real}]
+            set sum_imag [expr {$sum_imag + $imag}]
+        }
+        lappend Hk $sum_real $sum_imag
+    }
+    return $Hk
+}
+
+proc listFromFile {filename} {
+    set f [open $filename r]
+    set data [split [string trim [read $f]]]
+    close $f
+    return $data
+}
+
+set x [listFromFile data.csv]
+set N [llength $x]
+puts "Read in $N lines for vsin"
+
+puts "Calculating DFT"
+set t0 [clock milliseconds]
+set Hk [dft $x]
+set t1 [clock milliseconds]
+set dt [expr {($t1-$t0)/1000.0}]
+puts "$N-point DFT took $dt seconds."
+
+proc print_Hk {Hk} {
+    foreach {real imag} $Hk {
+        puts "$real $imag"
+    }
+}
+```
+
+And let's run it (on my local computer):
+```bash
+% tclsh dft.tcl                                                                       Read in 2000 lines for vsin
+Calculating DFT
+2000-point DFT took 3.858 seconds.
+```
+
+A few comments:
+
+1. It was very difficult to write this function.  TCL doesn't support complex numbers and the code in TCL is unlike any math textbook.  
+
+2. I made many errors trying to get it to work and couldn't understand the error messages.  It turned out I had missed putting the `$` in front of a variable name in some places and it gave weird error messages.  
+
+3. TCL does integer division so I had to make sure to do `/double($N)`.  
+
+4. Without complex number support using the output of the DFT is going to be very painful as functions like `abs` would need to be rewritten for complex numbers.  There are TCL libraries out there for complex numbers but they are typically not shipped/used with EDA software.
+
+5. The run time of 3.858 seconds was $(round(3.858/t_julia3, sigdigits=3))x slower than Julia and $(round(t_python/3.858, sigdigits=3))x faster than Python.  A bit surprising to say the least that it was faster than Python.  Could converting complex `exp` to `sin` and `cos` be a lot faster?  I suspect so but am not sure.
+"""
+
+# ╔═╡ 0532bbb3-428e-4d32-876e-af92c1c7bb01
+md"""
 ## Appendix
 
 1. This site was written in [Pluto](https://github.com/fonsp/Pluto.jl) which is a Julia environment in a web browser.
@@ -293,7 +368,6 @@ md"""
 2. MIT has many good university level courses using Julia and Pluto on their [Computational Thinking](https://computationalthinking.mit.edu/Spring21/) course.  It is really a game changer for someone learning technical computing in that it gives students an interactive notebook where they can interact with the mathematics and get a good understanding of how the algorithms work.  
 
 3. If you have any comments or suggestions, please let me know at `glen` "dot" `hertz` at that popular Gmail site.
-
 """
 
 # ╔═╡ Cell order:
@@ -340,3 +414,5 @@ md"""
 # ╟─f0a5520a-c48d-424d-a12a-7d80f51a8071
 # ╠═4bdb81af-7520-46ae-a151-90446ac4be61
 # ╟─2a5cdcfc-3d72-458d-8a1a-471d7e2196a9
+# ╟─e62a71a3-7c54-4390-9263-5e6e55e70718
+# ╟─0532bbb3-428e-4d32-876e-af92c1c7bb01
