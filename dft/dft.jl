@@ -208,6 +208,9 @@ begin
 	DFT_py = py"DFT_py"  # copy python function over so it exists on the Julia side
 end
 
+# ╔═╡ 13196703-d411-4ad8-aa92-694812ab5508
+md"""> **Note:** It took a while to figure out how to handle complex numbers and `pi`.  The `math.exp` function doesn't work with complex numbers so `cmath.exp` had to be used instead.  Python doesn't have good support for generics."""
+
 # ╔═╡ 74abbc3f-784e-474c-bfdc-1e19718ca6cb
 t_python = @elapsed dftpy = DFT_py(vsin) # this takes a long time to run (eg > 10 seconds)
 
@@ -377,7 +380,7 @@ md"""
 
 2. MIT has many good university level courses using Julia and Pluto on their [Computational Thinking](https://computationalthinking.mit.edu/Spring21/) course.  It is really a game changer for someone learning technical computing in that it gives students an interactive notebook where they can interact with the mathematics and get a good understanding of how the algorithms work.  
 
-3. If you have any comments or suggestions, please let me know at `glen` "dot" `hertz` at that popular Gmail site.
+3. If you have any comments or suggestions, please let me know at `glen` "dot" `hertz` at that popular Gmail site.  I'd really appreciate expamples from other programming languages common in EDA.
 """
 
 # ╔═╡ Cell order:
@@ -413,6 +416,7 @@ md"""
 # ╟─b4b92f64-276f-4bdb-8b68-23406efc774a
 # ╠═3be5aa2a-92b2-4dbe-a9ff-bfafa2f6ecb0
 # ╠═470dfa78-66c8-40a7-90dd-749667244207
+# ╟─13196703-d411-4ad8-aa92-694812ab5508
 # ╠═74abbc3f-784e-474c-bfdc-1e19718ca6cb
 # ╟─bb6d5b1c-9382-43ed-8725-c0ab1b513479
 # ╠═1f084504-4f3a-4eb9-a4b9-b12b3c154497
