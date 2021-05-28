@@ -16,7 +16,7 @@ begin
         Pkg.PackageSpec(name="LaTeXStrings", version="1"),
     	Pkg.PackageSpec(name="OffsetArrays", version="1.9"),
     ])
-    using PlutoUI, LaTeXStrings
+    using LaTeXStrings
 end
 
 # ╔═╡ cb7a88cb-5f29-4feb-9560-e77013967dcd
