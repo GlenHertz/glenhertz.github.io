@@ -36,14 +36,14 @@ end
 md"""
 ### Installation
 
-If running locally we will first install Python and Conda and a couple Julia packages in a sandbox environment...just hang tight for 20 seconds or so...
+If running locally we will first install Python and Conda and a couple Julia packages in a sandbox environment...just hang tight for 10 seconds or so...and about 30 seconds to run the complete notebook the first time.
 """
 
 # ╔═╡ 8daa7390-bf0a-11eb-2f09-cb503508dca6
 md"""
 # DFT Challenge
 
-This is a challeng to write the Discrete Fourier Tranform in any language to see how well it is suitable to electrical engineering tasks.  
+This is a challenge to write the Discrete Fourier Tranform in any language to see how well it is suitable to electrical engineering tasks.  Electrical engineers typically deal with data in the time and frequency domain so dealing with real and complex numbers is quite common along with processing lots of data.
 
 There are many ways to write a faster DFT but this challenge is to just use the basic algorithm and to try to write it by hand like it is described in a textbook.  There are many issues that an electrical engineer will run into where they will have to write their own solution to and not depend on code written by someone else.
 
@@ -206,7 +206,7 @@ t_python = @elapsed dftpy = DFT_py(vsin) # this takes a long time to run (eg > 1
 
 # ╔═╡ bb6d5b1c-9382-43ed-8725-c0ab1b513479
 md"""
-The Python version took $(round(t_python, sigdigits=3)) seconds.  Let's check if they are equal:
+The Python version took $(round(t_python, sigdigits=3)) seconds which is $(round(t_python/t_julia2, sigdigits=3))x slower than Julia.  Let's check if they are equal:
 """
 
 
