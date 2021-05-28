@@ -382,7 +382,7 @@ md"""
 
 2. MIT has many good university level courses using Julia and Pluto on their [Computational Thinking](https://computationalthinking.mit.edu/Spring21/) course.  It is really a game changer for someone learning technical computing in that it gives students an interactive notebook where they can interact with the mathematics and get a good understanding of how the algorithms work.  
 
-3. If you have any comments or suggestions, please let me know at `glen` "dot" `hertz` at that popular Gmail site.  I'd really appreciate expamples from other programming languages common in EDA.
+3. If you have any comments or suggestions, please let me know at `glen` "dot" `hertz` at that popular Gmail site.  I'd really appreciate examples from other programming languages common in EDA.
 """
 
 # ╔═╡ Cell order:
