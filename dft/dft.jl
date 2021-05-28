@@ -47,7 +47,7 @@ This is a challenge to write the Discrete Fourier Tranform in any language to se
 
 There are many ways to write a faster DFT but this challenge is to just use the basic algorithm and to try to write it by hand like it is described in a textbook.  There are many issues that an electrical engineer will run into where they will have to write their own solution to and not depend on code written by someone else.
 
-## DFT Description from a textbook:
+## DFT description from a textbook:
 
 $$H_k[k] = \sum_{n=0}^{N-1}x[n] e^{\frac{-j2\pi k n}{N}} \text{, where } k = 0 \ldots N-1$$
 
