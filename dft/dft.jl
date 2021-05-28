@@ -209,7 +209,7 @@ begin
 end
 
 # ╔═╡ 13196703-d411-4ad8-aa92-694812ab5508
-md"""> **Note:** It took a while to figure out how to handle complex numbers and `pi`.  The `math.exp` function doesn't work with complex numbers so `cmath.exp` had to be used instead.  Python doesn't have good support for generics."""
+md"""> **Note:** It took a while to figure out how to handle complex numbers and `pi`.  The `math.exp` function doesn't work with complex numbers so `cmath.exp` had to be used instead.  It is pretty clear that Python doesn't have good support for generics.  """
 
 # ╔═╡ 74abbc3f-784e-474c-bfdc-1e19718ca6cb
 t_python = @elapsed dftpy = DFT_py(vsin) # this takes a long time to run (eg > 10 seconds)
