@@ -18,7 +18,7 @@ begin
 		Pkg.PackageSpec(name="PlutoUI", version="0.7"),
     ])
     using LaTeXStrings, PlutoUI
-	TableOfContents(title="📚 Table of Contents", indent=true, depth=3, aside=true)
+	TableOfContents(title="📚 Table of Contents", indent=true, depth=4, aside=true)
 end
 
 # ╔═╡ cb7a88cb-5f29-4feb-9560-e77013967dcd
@@ -267,17 +267,17 @@ dftnumpy ≈ dftpy
 
 # ╔═╡ 2a5cdcfc-3d72-458d-8a1a-471d7e2196a9
 md"""
-## Comparison between Python and Julia
+### Comparison between Python and Julia
 
-### Pros for both
+#### Pros for both
 
 1. Both Python and Julia have similar syntax and allow support array comprehensions which allow the user to write a complex double-nested `for` loop in one line.
 
-### Pros for Python
+#### Pros for Python
 
 1. Some users may like `0-based` array indexing better if coming from a C, TCL, SKILL, or Perl background.
 
-### Pros for Julia
+#### Pros for Julia
 
 1. Some users may like `1-based` array indexing better if coming from an engineering background (e.g. MATLAB, Fortran, R, Maple).
 
@@ -295,7 +295,7 @@ md"""
 
 8. Julia has great Python interopability and can `import` Python packages and call them with ease.
 
-### Notable differences
+#### Notable differences
 
 1. Julia uses 1-based indexing; Python uses 0-based indexing
 
@@ -304,7 +304,7 @@ md"""
 
 # ╔═╡ e62a71a3-7c54-4390-9263-5e6e55e70718
 md"""
-## TCL implementation
+## TCL Implementation
 
 TCL is very popular in EDA so let's write the DFT function in TCL:
 
@@ -421,14 +421,14 @@ This Python version finished in $(round(t_python2, sigdigits=2)) seconds which i
 
 # ╔═╡ 3e48d6b3-3bf6-4d2e-a6d1-8ad3db80fc1a
 md"""
-## SKILL implementation
+## SKILL Implementation
 
 > **Note:** If you have access to SKILL and create an implementation, please let me know (see below).
 """
 
 # ╔═╡ c12c124c-62e8-4a57-a46a-0b1a44f14571
 md"""
-## MATLAB implementation
+## MATLAB Implementation
 
 > **Note:** If you have access to MATLAB and create an implementation, please let me know (see below).
 """
@@ -498,7 +498,7 @@ If you are interested in using Julia in your company then reach out for technica
 # ╟─f0a5520a-c48d-424d-a12a-7d80f51a8071
 # ╠═4bdb81af-7520-46ae-a151-90446ac4be61
 # ╟─2a5cdcfc-3d72-458d-8a1a-471d7e2196a9
-# ╠═e62a71a3-7c54-4390-9263-5e6e55e70718
+# ╟─e62a71a3-7c54-4390-9263-5e6e55e70718
 # ╠═527585d1-e9c7-42ad-aa1c-e443772f522c
 # ╟─f1dd33f2-744f-4288-92ab-7ff54108dd05
 # ╟─869b8945-3cc9-457f-a3cf-5cca441db802
