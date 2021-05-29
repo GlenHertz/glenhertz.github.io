@@ -361,6 +361,14 @@ Calculating DFT
 2000-point DFT took 3.858 seconds.
 ```
 
+
+"""
+
+# ╔═╡ 527585d1-e9c7-42ad-aa1c-e443772f522c
+t_tcl = 3.858
+
+# ╔═╡ f1dd33f2-744f-4288-92ab-7ff54108dd05
+md"""
 ### Comparision between TCL, Julia and Python
 
 1. It was very difficult to write this function.  TCL doesn't support complex numbers and the code in TCL is unlike any math textbook.  Instead of a 2 line function it is 14 lines and is much less usable.
@@ -375,7 +383,40 @@ Calculating DFT
 
 6. TCL doesn't have math as part of its syntax.  Math syntax is handled specifically by the `expr` function.  I don't know of a way to use my newly created `dft` function along with the `expr` function so I can use it in other math expressions.  User defined math functions in TCL are not composable.
 
-7. The run time of 3.858 seconds was $(round(3.858/t_julia3, sigdigits=3))x slower than Julia and $(round(t_python/3.858, sigdigits=3))x faster than Python.  A bit surprising to that TCL was faster than Python.  Could converting complex `exp` to `sin` and `cos` be a lot faster?  Julia got $(round(t_julia/t_julia2, sigdigits=2))x faster when using `cispi` and looking at the [implementation](https://github.com/JuliaLang/julia/blob/6aaedecc447e3d8226d5027fb13d0c3cbfbfea2a/base/complex.jl#L563-L566) it calls `sincospi` which is a similar to calling `cos` and `sin` separately but a bit faster when `sin` and `cos` are calculated simultaneously.  So Python and TCL are probably pretty similar for speed.  But TCL doesn't support complex numbers so it isn't a fair comparision as someone who needed complex numbers wouldn't want to use TCL. 
+7. The run time of $t_tcl seconds was $(round(t_tcl/t_julia3, sigdigits=3))x slower than Julia and $(round(t_python/3.858, sigdigits=3))x faster than Python.  A bit surprising to that TCL was faster than Python.  Could converting complex `exp` to `sin` and `cos` be a lot faster?  Julia got $(round(t_julia/t_julia2, sigdigits=2))x faster when using `cispi` and looking at the [implementation](https://github.com/JuliaLang/julia/blob/6aaedecc447e3d8226d5027fb13d0c3cbfbfea2a/base/complex.jl#L563-L566) it calls `sincospi` which is a similar to calling `cos` and `sin` separately but a bit faster when `sin` and `cos` are calculated simultaneously.  So Python and TCL are probably pretty similar for speed.  But TCL doesn't support complex numbers so it isn't a fair comparision as someone who needed complex numbers wouldn't want to use TCL. 
+"""
+
+# ╔═╡ 869b8945-3cc9-457f-a3cf-5cca441db802
+md"""
+### Python revisited
+
+It is a bit unsettling to not do the equivalent Python version of the TCL implementation.  Let's see how fast Python is using the same algorithm as TCL:
+
+"""
+
+# ╔═╡ b7e7511a-0d0a-4b63-afdc-0c8de4352ff8
+begin
+	py"""
+	import math
+	def DFT_sincos_py(x):
+		N = len(x)
+		Hk = []
+		for k in range(0,N):
+			sum_real = 0.0
+			sum_imag = 0.0
+			for n in range(0,N):
+				sum_real += x[n]*math.sin(-2*math.pi*n*k/N)
+				sum_imag += x[n]*math.cos(-2*math.pi*n*k/N)
+			Hk.append(complex(sum_real, sum_imag))
+		return Hk
+	"""
+	DFT_sincos_py = py"DFT_sincos_py"  # copy python function over so it exists on the Julia side
+	t_python2 = @elapsed dft2py = DFT_sincos_py(vsin)
+end
+
+# ╔═╡ 5f078b8e-4068-44c8-932f-db769cbee742
+md"""
+This Python version finished in $(round(t_python2, sigdigits=2)) seconds which is $(round(t_python/t_python2, sigdigits=2))x faster than the `exp` version of Python, $(round(t_python2/t_tcl, sigdigits=2))x slower than TCL, and $(round(t_python2/t_julia2, sigdigits=2))x slower than Julia.  So it seems, in this case at least, TCL is a bit faster than pure Python.  But being that TCL doesn't support complex numbers it wouldn't make sense to use TCL.
 """
 
 # ╔═╡ 3e48d6b3-3bf6-4d2e-a6d1-8ad3db80fc1a
@@ -457,7 +498,12 @@ If you are interested in using Julia in your company then reach out for technica
 # ╟─f0a5520a-c48d-424d-a12a-7d80f51a8071
 # ╠═4bdb81af-7520-46ae-a151-90446ac4be61
 # ╟─2a5cdcfc-3d72-458d-8a1a-471d7e2196a9
-# ╟─e62a71a3-7c54-4390-9263-5e6e55e70718
+# ╠═e62a71a3-7c54-4390-9263-5e6e55e70718
+# ╠═527585d1-e9c7-42ad-aa1c-e443772f522c
+# ╟─f1dd33f2-744f-4288-92ab-7ff54108dd05
+# ╟─869b8945-3cc9-457f-a3cf-5cca441db802
+# ╠═b7e7511a-0d0a-4b63-afdc-0c8de4352ff8
+# ╟─5f078b8e-4068-44c8-932f-db769cbee742
 # ╟─3e48d6b3-3bf6-4d2e-a6d1-8ad3db80fc1a
 # ╟─c12c124c-62e8-4a57-a46a-0b1a44f14571
 # ╟─0532bbb3-428e-4d32-876e-af92c1c7bb01
