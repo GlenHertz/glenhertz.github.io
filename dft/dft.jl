@@ -394,15 +394,21 @@ md"""
 
 # ╔═╡ 0532bbb3-428e-4d32-876e-af92c1c7bb01
 md"""
+## Getting in contact
+
+If you have any comments or suggestions, please let me know at `hertz` at `juliacomputing.com`.  I'd really appreciate examples from other programming languages common in EDA.  
+
+
+If you are interested in using Julia in your company then reach out for technical support, professional services or engineering/EDA design software.  See more info at [juliacomputing.com](https://juliacomputing.com/).  We enable engineers to be more productive.
+
 ## Appendix
 
-1. This site was written in [Pluto](https://github.com/fonsp/Pluto.jl) which is a Julia environment in a web browser.
+1. This site was written in [Pluto](https://github.com/fonsp/Pluto.jl) which is an interactive Julia environment in a web browser.
 
 2. MIT has many good university level courses using Julia and Pluto on their [Computational Thinking](https://computationalthinking.mit.edu/Spring21/) course.  It is really a game changer for someone learning technical computing in that it gives students an interactive notebook where they can interact with the mathematics and get a good understanding of how the algorithms work.  
 
-3. If you have any comments or suggestions, please let me know at `hertz` at `juliacomputing.com`.  I'd really appreciate examples from other programming languages common in EDA.  
 
-4. If you are interested in using Julia in your company then reach out for technical support, professional services or engineering/EDA design software.  See more info at [juliacomputing.com](https://juliacomputing.com/).  We help engineers be more productive.
+
 """
 
 # ╔═╡ Cell order:
