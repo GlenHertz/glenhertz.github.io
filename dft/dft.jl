@@ -15,8 +15,10 @@ begin
         Pkg.PackageSpec(name="Conda", version="1.5"),
         Pkg.PackageSpec(name="LaTeXStrings", version="1"),
     	Pkg.PackageSpec(name="OffsetArrays", version="1.9"),
+		Pkg.PackageSpec(name="PlutoUI", version="0.7"),
     ])
-    using LaTeXStrings
+    using LaTeXStrings, PlutoUI
+	TableOfContents(title="📚 Table of Contents", indent=true, depth=3, aside=true)
 end
 
 # ╔═╡ cb7a88cb-5f29-4feb-9560-e77013967dcd
@@ -43,11 +45,13 @@ If running locally we will first install Python and Conda and a couple Julia pac
 md"""
 # DFT Challenge
 
+## Motivation
+
 This is a challenge to write the Discrete Fourier Tranform in any language to see how well it is suitable to electrical engineering tasks.  Electrical engineers typically deal with data in the time and frequency domain so dealing with real and complex numbers is quite common along with processing lots of data.
 
 There are many ways to write a faster DFT but this challenge is to just use the basic algorithm and to try to write it by hand like it is described in a textbook.  There are many issues that an electrical engineer will run into where they will have to write their own solution to and not depend on code written by someone else.
 
-## DFT description from a textbook:
+## DFT description from a textbook
 
 $$H_k[k] = \sum_{n=0}^{N-1}x[n] e^{\frac{-j2\pi k n}{N}} \text{, where } k = 0 \ldots N-1$$
 
@@ -139,7 +143,7 @@ Let's check that the improved function returns the same result:
 
 # ╔═╡ 485c624a-d950-46b5-8ed6-b0a100ae5008
 md"""
-### Improved Julia with 0-based indexing
+### Improved Julia version (with 0-based indexing)
 
 The first index of a DFT is typically `0` for DC so users would like to have the first index be `0`.  Also, some users would like to use 0-based indexing and Julia can support this through a custom defined type.  The `OffsetArrays` package defines an array with user-defined indexing.  Let's use this to see how it works.
 """
@@ -265,15 +269,15 @@ dftnumpy ≈ dftpy
 md"""
 ## Comparison between Python and Julia
 
-### Pros for both:
+### Pros for both
 
 1. Both Python and Julia have similar syntax and allow support array comprehensions which allow the user to write a complex double-nested `for` loop in one line.
 
-### Pros for Python:
+### Pros for Python
 
 1. Some users may like `0-based` array indexing better if coming from a C, TCL, SKILL, or Perl background.
 
-### Pros for Julia:
+### Pros for Julia
 
 1. Some users may like `1-based` array indexing better if coming from an engineering background (e.g. MATLAB, Fortran, R, Maple).
 
@@ -300,7 +304,7 @@ md"""
 
 # ╔═╡ e62a71a3-7c54-4390-9263-5e6e55e70718
 md"""
-## TCL version
+## TCL implementation
 
 TCL is very popular in EDA so let's write the DFT function in TCL:
 
@@ -357,7 +361,7 @@ Calculating DFT
 2000-point DFT took 3.858 seconds.
 ```
 
-A few comments:
+### Comparision between TCL, Julia and Python
 
 1. It was very difficult to write this function.  TCL doesn't support complex numbers and the code in TCL is unlike any math textbook.  Instead of a 2 line function it is 14 lines and is much less usable.
 
@@ -372,6 +376,20 @@ A few comments:
 6. TCL doesn't have math as part of its syntax.  Math syntax is handled specifically by the `expr` function.  I don't know of a way to use my newly created `dft` function along with the `expr` function so I can use it in other math expressions.  User defined math functions in TCL are not composable.
 
 7. The run time of 3.858 seconds was $(round(3.858/t_julia3, sigdigits=3))x slower than Julia and $(round(t_python/3.858, sigdigits=3))x faster than Python.  A bit surprising to that TCL was faster than Python.  Could converting complex `exp` to `sin` and `cos` be a lot faster?  Julia got $(round(t_julia/t_julia2, sigdigits=2))x faster when using `cispi` and looking at the [implementation](https://github.com/JuliaLang/julia/blob/6aaedecc447e3d8226d5027fb13d0c3cbfbfea2a/base/complex.jl#L563-L566) it calls `sincospi` which is a similar to calling `cos` and `sin` separately but a bit faster when `sin` and `cos` are calculated simultaneously.  So Python and TCL are probably pretty similar for speed.  But TCL doesn't support complex numbers so it isn't a fair comparision as someone who needed complex numbers wouldn't want to use TCL. 
+"""
+
+# ╔═╡ 3e48d6b3-3bf6-4d2e-a6d1-8ad3db80fc1a
+md"""
+## SKILL implementation
+
+> **Note:** If you have access to SKILL and create an implementation, please let me know (see below).
+"""
+
+# ╔═╡ c12c124c-62e8-4a57-a46a-0b1a44f14571
+md"""
+## MATLAB implementation
+
+> **Note:** If you have access to MATLAB and create an implementation, please let me know (see below).
 """
 
 # ╔═╡ 0532bbb3-428e-4d32-876e-af92c1c7bb01
@@ -434,4 +452,6 @@ md"""
 # ╠═4bdb81af-7520-46ae-a151-90446ac4be61
 # ╟─2a5cdcfc-3d72-458d-8a1a-471d7e2196a9
 # ╟─e62a71a3-7c54-4390-9263-5e6e55e70718
+# ╟─3e48d6b3-3bf6-4d2e-a6d1-8ad3db80fc1a
+# ╟─c12c124c-62e8-4a57-a46a-0b1a44f14571
 # ╟─0532bbb3-428e-4d32-876e-af92c1c7bb01
