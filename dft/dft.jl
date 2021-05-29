@@ -371,7 +371,7 @@ A few comments:
 
 6. TCL doesn't have math as part of its syntax.  Math syntax is handled specifically by the `expr` function.  I don't know of a way to use my newly created `dft` function along with the `expr` function so I can use it in other math expressions.  User defined math functions in TCL are not composable.
 
-7. The run time of 3.858 seconds was $(round(3.858/t_julia3, sigdigits=3))x slower than Julia and $(round(t_python/3.858, sigdigits=3))x faster than Python.  A bit surprising to say the least that it was faster than Python.  Could converting complex `exp` to `sin` and `cos` be a lot faster?  I suspect so but am not sure.
+7. The run time of 3.858 seconds was $(round(3.858/t_julia3, sigdigits=3))x slower than Julia and $(round(t_python/3.858, sigdigits=3))x faster than Python.  A bit surprising to that TCL was faster than Python.  Could converting complex `exp` to `sin` and `cos` be a lot faster?  Julia got $(round(t_julia/t_julia2, sigdigits=2))x faster when using `cispi` and looking at the [implementation](https://github.com/JuliaLang/julia/blob/6aaedecc447e3d8226d5027fb13d0c3cbfbfea2a/base/complex.jl#L563-L566) it calls `sincospi` which is a similar to calling `cos` and `sin` separately but a bit faster when `sin` and `cos` are calculated simultaneously.  So Python and TCL are probably pretty similar for speed.  But TCL doesn't support complex numbers so it isn't a fair comparision as someone who needed complex numbers wouldn't want to use TCL. 
 """
 
 # ╔═╡ 0532bbb3-428e-4d32-876e-af92c1c7bb01
