@@ -229,7 +229,7 @@ The Python version took $(round(t_python, sigdigits=3)) seconds which is $(round
 dftpy ≈ dft1
 
 # ╔═╡ 22de6bec-5774-40e4-9685-9347de93b21b
-md""" ### Improved Numpy Version
+md""" ### Improved Numpy version
 
 We will write the same algorithm using Numpy.
 """
