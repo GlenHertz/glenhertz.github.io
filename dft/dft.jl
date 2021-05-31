@@ -520,7 +520,7 @@ set dt [expr {($t1-$t0)/1000.0}]
 puts "$N-point DFT took $dt seconds."
 ```
 
-The above assumes the data passed to the `DFT` proc is a TCL list.  If it was a waveform type then accessing the values from the waveform would be more complex as well as if the resulting calculation was also to be a waveform (I suspect it would be slower too).  The above code is completely untested and hasn't been run but if someone can run it and send the results, that would be appreciated -- my guess is it will be at least an order of magnitude slower than anything else.
+The above assumes the data passed to the `DFT` proc is a TCL list.  If it was a waveform type then accessing the values from the waveform would be more complex as well as if the result was returned as a complex waveform (I suspect it would be slower too).  The above code is completely untested and hasn't been run but if someone can run it and send the results, that would be appreciated -- my guess is it will be at least an order of magnitude slower than anything else.
 
 ### Comparision between ACE/TCL and Julia
 
