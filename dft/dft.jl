@@ -333,7 +333,7 @@ t_python2 = @elapsed dft2py = DFT_sincos_py(vsin)
 
 # ╔═╡ 869b8945-3cc9-457f-a3cf-5cca441db802
 md"""
-### Python with `cos` and `sin` ($(round(Int, t_python2/t_julia2_threads))x slower)
+### Improved Python with `cos` and `sin` ($(round(Int, t_python2/t_julia2_threads))x slower)
 
 Because Julia can use `cis` instead of `exp`, let's create a similar Python version:
 
@@ -367,13 +367,13 @@ md"""
 
 3. The `exp` function is generic in that it can accept reals, complex numbers and matrices.  In Python, for complex arguments `cmath.exp` is needed while for real arguments `math.exp` is needed (or `numpy.exp` for numpy).  Therefore it is harder for the user to write generic functions built on top of `exp`.  In Julia functions are generic with no loss in performance or additional complexity for the user.
 
-4. In this case, Julia is **$(round(Int, t_python2/t_julia2_threads))x** faster than pure Python (both using `cos` and `sin`).  Often an interative loop is the easiest to write an algorithm but if the code is too slow then Python users will try to rewrite the algorithm in a vectorized form to speed things up with Numpy.  Performance isn't an issue...until it is...and then requires extra time and expertise to use other plug-in libraries.
+4. For the simple DFT, Julia is **$(round(Int, t_python2/t_julia2_threads))x** faster than pure Python (both using `cos` and `sin`).  Often an interative loop is the easiest to write an algorithm but if the code is too slow then Python users will try to rewrite the algorithm in a vectorized form to speed things up with Numpy.  Performance isn't an issue...until it is...and then requires extra time and expertise to use other plug-in libraries.
 
-4. The multi-threaded version of Julia with $(Threads.nthreads()) threads was $(round(t_julia2/t_julia2_threads, sigdigits=2))x faster than without threads.  It was very painless to do this.  Python has a dozen or so libraries which support a subset of the Python language to speed things up in various ways but it is a big sacrifice in usablity and generality.  Looking at numerical computing code in Python they are usually a mix of C, Fortran and Cython.  Most engineers are not going to want to write a build system to do this and learn 1 or 2 more languages.
+4. The multi-threaded version of Julia with $(Threads.nthreads()) threads was $(round(t_julia2/t_julia2_threads, sigdigits=2))x faster than without threads.  It was very painless to do this.  Python has a dozen or so libraries which support a subset of the Python language (with different symantics) to speed things up in various ways but it is a big sacrifice in usablity and generality.  Looking at numerical computing code in Python they are usually a mix of C, Fortran and Cython.  Most engineers are not going to want to write a build system to do this and learn 1 or 2 more languages.
 
 5. Julia supports broadcasting generically so a function like `exp` can be distributed over a vector `x` like so `exp.(x)`.  This applies to all functions and makes for much easier development and usability.  To take the `exp` of a matrix use `exp(matrix)` (which is not the same as taking the `exp` of each element of the matrix with `exp.(matrix)`.
 
-6. Julia supports many engineering math functions that are not available in other eccosystems. It is designed for engineers doing technical computing.
+6. Julia supports many engineering math functions that are not available in other ecosystems. It is designed for engineers doing technical computing.
 
 7. Julia syntax is more like an engineering textbook, supporting syntax like `f(x) = 2x^2 - 5x + 7` for function definitions, `0.0:0.001:0.5` for quick `start:step:stop` range definitions, and `≈` (`\approx<tab>`) for approximately equal.
 
@@ -459,7 +459,7 @@ md"""
 
 2. In this case at least, TCL is a bit faster than pure Python.  But being that TCL doesn't support complex numbers it wouldn't make sense to use TCL.
 
-2. I made many errors trying to get the TCL version to work and couldn't understand the error messages.  It turned out I had missed putting the `$` in front of a variable name and it gave weird error messages that were referencing lines far away from the actual issue.  
+2. I made many errors trying to get the TCL version to work and couldn't understand the error messages.  It turned out I had missed putting the `$` in front of a variable name and it gave weird error messages that referenced lines far away from the actual issue.  
 
 3. TCL does integer division so `1/4` equals `0` (not `0.25`).  I had to make sure to do `/double($N)` to get regular division.  These are the sorts of things that can easily cause code to break (say a user passed in an integer) in non-obvious ways and lead to long debugging sessions.  I've seen this bug in production code where the Verilog-A compiler (written in C which also does integer division) was doing `V/R` but the resistance was an integer and the programmer forgot to convert it to a real and the bug was in the field many years before it could be tracked down. 
 
@@ -557,7 +557,7 @@ If you are interested in using Julia in your company then reach out for technica
 # ╠═01b86d4e-d9f2-42cb-9c8c-f52cab1f4d31
 # ╟─f0a5520a-c48d-424d-a12a-7d80f51a8071
 # ╠═4bdb81af-7520-46ae-a151-90446ac4be61
-# ╠═869b8945-3cc9-457f-a3cf-5cca441db802
+# ╟─869b8945-3cc9-457f-a3cf-5cca441db802
 # ╠═b7e7511a-0d0a-4b63-afdc-0c8de4352ff8
 # ╠═cac67f07-f3ca-49de-b3df-d4f7c8b71a4c
 # ╠═498a0aff-8879-447d-85f2-35dc10e5aae7
