@@ -69,6 +69,11 @@ And so on until `k = N-1`.
 ## Julia
 """
 
+# ╔═╡ f9295ff5-5a1c-4217-a455-bb12d37880fc
+md"""
+The first implementation is in [Julia](https://julialang.org).  A somewhat newer language built to be higher-level than Python and as fast as C or Fortran, yet easy for engineers to code in.
+"""
+
 # ╔═╡ ffb8cd4a-21f8-4507-945d-99b6967c9788
 function DFT(x)
 	N = length(x)
@@ -572,6 +577,7 @@ If you are interested in using Julia in your company then reach out for technica
 # ╟─372dc7ad-5d86-4e09-a058-dc3c243bbb82
 # ╠═1d5ea4e7-dd3c-4583-a7dd-6bed050ada7a
 # ╟─8daa7390-bf0a-11eb-2f09-cb503508dca6
+# ╟─f9295ff5-5a1c-4217-a455-bb12d37880fc
 # ╠═ffb8cd4a-21f8-4507-945d-99b6967c9788
 # ╟─4a8624aa-2dad-4ce1-8442-32ec454930d6
 # ╟─9f4a2c5f-a8b7-4fbf-93a4-2bc129ae7207
