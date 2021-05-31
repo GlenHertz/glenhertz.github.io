@@ -16,8 +16,9 @@ begin
         Pkg.PackageSpec(name="LaTeXStrings", version="1"),
     	Pkg.PackageSpec(name="OffsetArrays", version="1.9"),
 		Pkg.PackageSpec(name="PlutoUI", version="0.7"),
+		Pkg.PackageSpec(name="BenchmarkTools", version="1"),
     ])
-    using LaTeXStrings, PlutoUI
+    using LaTeXStrings, PlutoUI, BenchmarkTools
 	TableOfContents(title="📚 Table of Contents", indent=true, depth=4, aside=true)
 end
 
@@ -100,8 +101,13 @@ md"### Run Julia and record the execution time"
 # ╔═╡ bd9842bb-dcca-4f75-a916-dbfe51a8469b
 dft1 = DFT(vsin)
 
+# ╔═╡ adc93d58-0dce-4c6e-b100-e93ca481f53c
+md"""
+For measuring the run time accurately we will use the `BenchmarkTools` packages which re-runs the code over and over and measures the minimum time.
+"""
+
 # ╔═╡ 4394b038-a5e5-4054-8bbb-b78d49329f00
-t_julia = @elapsed DFT(vsin)
+t_julia = @belapsed DFT(vsin)
 
 # ╔═╡ 3e57dd3b-c179-4d1e-aeec-42ef7fc7b9ca
 md"""
@@ -162,13 +168,13 @@ dft2 = DFT2(vsin)
 dft1 ≈ dft2
 
 # ╔═╡ 8350eed7-0e88-4055-8060-49bf8931c84e
-t_julia2 = @elapsed DFT2(vsin)
+t_julia2 = @belapsed DFT2(vsin)
 
 # ╔═╡ 418d36e3-0d7a-4b8a-aef6-ea0704e72320
 md"""
 > **Note:** above the `≈` operater checks for approximately equal (within floating point round-off error).  It can be typed with `\approx<tab>`.
 
-So the `cispi` version took $(round(t_julia2, sigdigits=3)) seconds.  It gets the same result and is $(round(t_julia/t_julia2, sigdigits=3))x faster.
+So the `cispi` version took $(round(t_julia2, sigdigits=3)) seconds.  It gets the same result and is $(round(t_julia/t_julia2, sigdigits=2))x faster.
 """
 
 # ╔═╡ fd7807ff-3a89-499e-937e-7550979145bd
@@ -186,10 +192,10 @@ vsin_0 = OffsetVector(vsin, 0:length(vsin)-1)
 dft3 = DFT2(vsin_0)
 
 # ╔═╡ 2e9845bc-a6ad-4b12-962f-35d1def78e64
-t_julia3 = @elapsed DFT2(vsin_0)
+t_julia3 = @belapsed DFT2(vsin_0)
 
 # ╔═╡ c35ce815-f1b9-4367-9f81-b2bd51850b12
-md"""The 0-based index version took $(round(t_julia3, sigdigits=3)) seconds which is $(round(t_julia2/t_julia3, sigdigits=3))x faster than the previous version (it actually is the same speed but there is a run-to-run noise of the computer is present)."""
+md"""The 0-based index version took $(round(t_julia3, sigdigits=3)) seconds which is $(round(t_julia2/t_julia3, sigdigits=2))x faster than the previous version."""
 
 # ╔═╡ b4b92f64-276f-4bdb-8b68-23406efc774a
 md"""
@@ -213,7 +219,7 @@ begin
 end
 
 # ╔═╡ 13196703-d411-4ad8-aa92-694812ab5508
-md"""> **Note:** It took a while to figure out how to handle complex numbers and `pi`.  The `math.exp` function doesn't work with complex numbers so `cmath.exp` had to be used instead.  It is pretty clear that Python doesn't have good support for generics.  """
+md"""> **Note:** It took a while to figure out how to handle complex numbers and `pi`.  The `math.exp` function doesn't work with complex numbers so `cmath.exp` had to be used instead.  It is clear that Python doesn't have good support for generics.  """
 
 # ╔═╡ 74abbc3f-784e-474c-bfdc-1e19718ca6cb
 t_python = @elapsed dftpy = DFT_py(vsin) # this takes a long time to run (eg > 10 seconds)
@@ -221,7 +227,7 @@ t_python = @elapsed dftpy = DFT_py(vsin) # this takes a long time to run (eg > 1
 
 # ╔═╡ bb6d5b1c-9382-43ed-8725-c0ab1b513479
 md"""
-The Python version took $(round(t_python, sigdigits=3)) seconds which is $(round(t_python/t_julia2, sigdigits=3))x slower than Julia.  Let's check if they are equal:
+The Python version takse too long to run so `@belapsed` isn't used to run it over and over.  It took $(round(t_python, sigdigits=3)) seconds which is $(round(t_python/t_julia2, sigdigits=2))x slower than Julia.  Let's check if they are equal:
 """
 
 
@@ -405,18 +411,61 @@ begin
 			sum_real = 0.0
 			sum_imag = 0.0
 			for n in range(0,N):
-				sum_real += x[n]*math.sin(-2*math.pi*n*k/N)
-				sum_imag += x[n]*math.cos(-2*math.pi*n*k/N)
+				sum_real += x[n]*math.cos(-2*math.pi*n*k/N)
+				sum_imag += x[n]*math.sin(-2*math.pi*n*k/N)
 			Hk.append(complex(sum_real, sum_imag))
 		return Hk
 	"""
 	DFT_sincos_py = py"DFT_sincos_py"  # copy python function over so it exists on the Julia side
-	t_python2 = @elapsed dft2py = DFT_sincos_py(vsin)
+	
 end
+
+# ╔═╡ cac67f07-f3ca-49de-b3df-d4f7c8b71a4c
+t_python2 = @elapsed dft2py = DFT_sincos_py(vsin)
+
+# ╔═╡ 498a0aff-8879-447d-85f2-35dc10e5aae7
+dft2py ≈ dft1
 
 # ╔═╡ 5f078b8e-4068-44c8-932f-db769cbee742
 md"""
 This Python version finished in $(round(t_python2, sigdigits=2)) seconds which is $(round(t_python/t_python2, sigdigits=2))x faster than the `exp` version of Python, $(round(t_python2/t_tcl, sigdigits=2))x slower than TCL, and $(round(t_python2/t_julia2, sigdigits=2))x slower than Julia.  So it seems, in this case at least, TCL is a bit faster than pure Python.  But being that TCL doesn't support complex numbers it wouldn't make sense to use TCL.
+"""
+
+# ╔═╡ 4a4e3b04-6e00-46fb-a9b8-8a3ca06d9cf4
+md"""
+### Julia revisited (multi-threading)
+
+Let's compare the above calculation with Julia too but Julia is a bit unique in that it has built-in support for multi-threading.  To do so Julia must be started with `julia --threads N` and then put `Threads.@threads` before the `for` loop: 
+"""
+
+# ╔═╡ 40a76500-fb57-408f-baf2-032be784e7f0
+function DFT2_threads(x)
+	N = length(x)
+    Hₖ = Vector{Complex{Float64}}(undef, N) # pre-allocate for thread-safety
+    Threads.@threads for k in 0:N-1
+        hₖ = 0.0 + im*0.0
+        for n in 0:N-1
+            hₖ += x[n+1]*cispi(-2n*k/N)
+        end
+        Hₖ[k+1] = hₖ
+    end
+    Hₖ
+end
+
+# ╔═╡ ba63aff4-f0f0-4f0d-acc7-7ce7d3ab60a4
+dft2_threads = DFT2_threads(vsin)
+
+# ╔═╡ ee637fb0-dba2-47fb-8cc2-117ad23cd5a6
+t_dft2_threads = @belapsed DFT2_threads(vsin)
+
+# ╔═╡ bb67d192-27e9-49e7-9853-202f498e6f46
+dft2_threads ≈ dft2
+
+# ╔═╡ c662aae3-fcd5-48dc-9e7c-fbbcbaf65e51
+md"""
+With using $(Threads.nthreads()) threads it finished in $(round(t_dft2_threads, sigdigits=3)) seconds which is $(round(t_julia2/t_dft2_threads, sigdigits=2))x faster than the `DFT2` Julia version without threads.
+
+So with Julia, not only can you get really fast and easy to write code but it is also easy to make it multi-threaded and achieve close to linear CPU scaling with minimal effort.
 """
 
 # ╔═╡ 3e48d6b3-3bf6-4d2e-a6d1-8ad3db80fc1a
@@ -464,6 +513,7 @@ If you are interested in using Julia in your company then reach out for technica
 # ╟─883216a0-a527-4b7a-b266-b6b08e321c6c
 # ╟─ac8f9841-8bd3-4913-8773-95923761c969
 # ╠═bd9842bb-dcca-4f75-a916-dbfe51a8469b
+# ╟─adc93d58-0dce-4c6e-b100-e93ca481f53c
 # ╠═4394b038-a5e5-4054-8bbb-b78d49329f00
 # ╟─3e57dd3b-c179-4d1e-aeec-42ef7fc7b9ca
 # ╟─c6c22775-9d3a-4cf8-ba84-df3e7ea51b03
@@ -503,7 +553,15 @@ If you are interested in using Julia in your company then reach out for technica
 # ╟─f1dd33f2-744f-4288-92ab-7ff54108dd05
 # ╟─869b8945-3cc9-457f-a3cf-5cca441db802
 # ╠═b7e7511a-0d0a-4b63-afdc-0c8de4352ff8
+# ╠═cac67f07-f3ca-49de-b3df-d4f7c8b71a4c
+# ╠═498a0aff-8879-447d-85f2-35dc10e5aae7
 # ╟─5f078b8e-4068-44c8-932f-db769cbee742
+# ╟─4a4e3b04-6e00-46fb-a9b8-8a3ca06d9cf4
+# ╠═40a76500-fb57-408f-baf2-032be784e7f0
+# ╠═ba63aff4-f0f0-4f0d-acc7-7ce7d3ab60a4
+# ╠═ee637fb0-dba2-47fb-8cc2-117ad23cd5a6
+# ╠═bb67d192-27e9-49e7-9853-202f498e6f46
+# ╟─c662aae3-fcd5-48dc-9e7c-fbbcbaf65e51
 # ╟─3e48d6b3-3bf6-4d2e-a6d1-8ad3db80fc1a
 # ╟─c12c124c-62e8-4a57-a46a-0b1a44f14571
 # ╟─0532bbb3-428e-4d32-876e-af92c1c7bb01
