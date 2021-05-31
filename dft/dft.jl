@@ -476,7 +476,7 @@ md"""
 md"""
 ## Synopsys ACE/TCL
 
-Synopsys has a math calculator language (called ACE/TCL) that is accessed from TCL using the `sx_equation` command which implements their mathematically processing language.  It is only for expressions (no control flow or looping) so the DFT below is a combination of TCL and `sx_equation` but `sx_equation` is used as much as possible where it can be used.
+Synopsys has a math calculator language (called ACE/TCL) that is accessed from TCL using the `sx_equation` command.  It is only for expressions (no control flow or looping) so the DFT below is a combination of TCL and `sx_equation` but `sx_equation` is used as much as possible where it can be used.
 
 
 ```tcl
