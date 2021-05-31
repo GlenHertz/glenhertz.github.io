@@ -259,14 +259,6 @@ md"""> **Note:** It took a while to figure out how to handle complex numbers and
 t_python = @elapsed dftpy = DFT_py(vsin) # this takes a long time to run (eg > 10 seconds)
 
 
-# ╔═╡ b4b92f64-276f-4bdb-8b68-23406efc774a
-md"""
-## Python ($(round(Int, t_python/t_julia2_threads))x slower)
-
-We will use the `PyCall` package to call Python from Julia
-
-"""
-
 # ╔═╡ bb6d5b1c-9382-43ed-8725-c0ab1b513479
 md"""
 The Python version takse too long to run so `@belapsed` isn't used to run it over and over.  It took $(round(t_python, sigdigits=3)) seconds which is $(round(Int, t_python/t_julia2_threads))x slower than the multi-threaded Julia version.  Let's check if they are equal:
@@ -335,6 +327,16 @@ end
 
 # ╔═╡ cac67f07-f3ca-49de-b3df-d4f7c8b71a4c
 t_python2 = @elapsed dft2py = DFT_sincos_py(vsin)
+
+# ╔═╡ b4b92f64-276f-4bdb-8b68-23406efc774a
+md"""
+## Python ($(round(Int, t_python2/t_julia2_threads))x slower)
+
+### Python `exp` version ($(round(Int, t_python/t_julia2_threads))x slower)
+
+We will use the `PyCall` package to call Python from Julia
+
+"""
 
 # ╔═╡ 869b8945-3cc9-457f-a3cf-5cca441db802
 md"""
