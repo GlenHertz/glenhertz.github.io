@@ -66,7 +66,7 @@ $$H_1[1] = \sum_{n=0}^{N-1}x[n] e^{\frac{-j2\pi 1 n}{N}} \text{,    where } k = 
 
 And so on until `k = N-1`.
 
-## Julia Implementation
+## Julia
 """
 
 # ╔═╡ ffb8cd4a-21f8-4507-945d-99b6967c9788
@@ -165,7 +165,7 @@ In this case we can use the `cispi` function which is the same as:
 
 $$\mathrm{cispi}(x) = \cos(\pi x) + \texttt{i} \sin(\pi x) = e^{\texttt{i} \pi x}$$
 
-where `i` is imaginary.  `cispi(x)` is a faster version of `exp(im*pi*x)` (see [Wikipedia](https://en.wikipedia.org/wiki/Cis_(mathematics)) for more info).
+where `i` is imaginary.  `cispi(x)` is a faster version of `exp(im*pi*x)` and also more accurate for large `x` since it doesn't depend on an inaccurate number for π 	(see [Wikipedia](https://en.wikipedia.org/wiki/Cis_(mathematics)) for more info).
 
 So let's rewrite the DFT with `cispi`:
 """
@@ -256,7 +256,7 @@ t_python = @elapsed dftpy = DFT_py(vsin) # this takes a long time to run (eg > 1
 
 # ╔═╡ b4b92f64-276f-4bdb-8b68-23406efc774a
 md"""
-## Python Implementation ($(round(Int, t_python/t_julia2_threads))x slower)
+## Python ($(round(Int, t_python/t_julia2_threads))x slower)
 
 We will use the `PyCall` package to call Python from Julia
 
@@ -333,7 +333,7 @@ t_python2 = @elapsed dft2py = DFT_sincos_py(vsin)
 
 # ╔═╡ 869b8945-3cc9-457f-a3cf-5cca441db802
 md"""
-### Improved Python with `cos` and `sin` ($(round(Int, t_python2/t_julia2_threads))x slower)
+### Improved Python (`cos` and `sin` = $(round(Int, t_python2/t_julia2_threads))x slower)
 
 Because Julia can use `cis` instead of `exp`, let's create a similar Python version:
 
@@ -371,7 +371,7 @@ md"""
 
 4. The multi-threaded version of Julia with $(Threads.nthreads()) threads was $(round(t_julia2/t_julia2_threads, sigdigits=2))x faster than without threads.  It was very painless to do this.  Python has a dozen or so libraries which support a subset of the Python language (with different symantics) to speed things up in various ways but it is a big sacrifice in usablity and generality.  Looking at numerical computing code in Python they are usually a mix of C, Fortran and Cython.  Most engineers are not going to want to write a build system to do this and learn 1 or 2 more languages.
 
-5. Julia supports broadcasting generically so a function like `exp` can be distributed over a vector `x` like so `exp.(x)`.  This applies to all functions and makes for much easier development and usability.  To take the `exp` of a matrix use `exp(matrix)` (which is not the same as taking the `exp` of each element of the matrix with `exp.(matrix)`.
+5. Julia supports broadcasting generically so a function like `exp` can be distributed over each element of vector `x` like so `exp.(x)`.  This applies to all functions and makes for much easier development and usability.  To take the `exp` of a matrix use `exp(matrix)` (which is not the same as taking the `exp` of each element of the matrix with `exp.(matrix)`.
 
 6. Julia supports many engineering math functions that are not available in other ecosystems. It is designed for engineers doing technical computing.
 
@@ -386,9 +386,12 @@ md"""
 2. Julia uses inclusive ranges (`1:10` is 1 to 10); Python uses exclusive ranges (`range(1,11)` is 1 to 10)
 """
 
+# ╔═╡ 527585d1-e9c7-42ad-aa1c-e443772f522c
+t_tcl = 3.858
+
 # ╔═╡ e62a71a3-7c54-4390-9263-5e6e55e70718
 md"""
-## TCL Implementation
+## TCL ($(round(Int, t_tcl/t_julia2_threads))x slower)
 
 TCL is very popular in EDA so let's write the DFT function in TCL:
 
@@ -448,9 +451,6 @@ Calculating DFT
 
 """
 
-# ╔═╡ 527585d1-e9c7-42ad-aa1c-e443772f522c
-t_tcl = 3.858
-
 # ╔═╡ f1dd33f2-744f-4288-92ab-7ff54108dd05
 md"""
 ### Comparision between TCL, Julia and Python
@@ -469,33 +469,96 @@ md"""
 
 6. TCL doesn't have math as part of its syntax.  Math syntax is handled specifically by the `expr` function.  I don't know of a way to use my newly created `dft` function along with the `expr` function so I can use it in other math expressions.  User defined math functions in TCL are not composable.
 
-7. The run time of $t_tcl seconds was $(round(Int, t_tcl/t_julia2_threads))x slower than Julia and $(round(t_python2/3.858, sigdigits=2))x faster than Python.  A bit surprising to that TCL was faster than Python.  But TCL doesn't support complex numbers so it isn't a fair comparision as someone who needed complex numbers wouldn't want to use TCL.
+7. The run time of $t_tcl seconds was $(round(Int, t_tcl/t_julia2_threads))x slower than Julia and $(round(t_python2/t_tcl, sigdigits=2))x faster than Python.  A bit surprising to that TCL was faster than Python.  But TCL doesn't support complex numbers so it isn't a fair comparision as someone who needed complex numbers wouldn't want to use TCL.
+"""
+
+# ╔═╡ c20504f8-56a6-47f6-9bd8-29c127c860f6
+md"""
+## Synopsys ACE/TCL
+
+Synopsys has a math calculator language (called ACE/TCL) that is accessed from TCL using the `sx_equation` command which implements their mathematically processing language.  It is only for expressions (no control flow or looping) so the DFT below is a combination of TCL and `sx_equation` but `sx_equation` is used as much as possible where it can be used.
+
+
+```tcl
+proc DFT {x} {
+    sx_equation "N=[llength $x]"
+    sx_equation "pi=acos(-1)"
+    set Hk {}
+    for {set k 0} {$k < $N} {incr k} {
+        sx_equation "sum_real=0.0"
+        sx_equation "sum_imag=0.0"
+        for {set n 0} {$n < $N} {incr n} {
+            sx_equation "xn=[lindex $x $n]}
+            sx_equation "n=$n"
+            sx_equation "k=$k"
+            sx_equation "real=xn*cos(-2*pi*n*k/N)"
+            sx_equation "imag=xn*sin(-2*pi*n*k/N)"
+            sx_equation "sum_real = sum_real + real"
+            sx_equation "sum_imag = sum_imag + imag"
+        }
+        lappend Hk $sum_real $sum_imag
+    }
+    return $Hk
+}
+
+proc listFromFile {filename} {
+    set f [open $filename r]
+    set data [split [string trim [read $f]]]
+    close $f
+    return $data
+}
+
+set x [listFromFile data.csv]
+set N [llength $x]
+puts "Read in $N lines for vsin"
+
+puts "Calculating DFT"
+set t0 [clock milliseconds]
+set Hk [dft $x]
+set t1 [clock milliseconds]
+set dt [expr {($t1-$t0)/1000.0}]
+puts "$N-point DFT took $dt seconds."
+```
+
+The above assumes the data passed to the `DFT` proc is a TCL list.  If it was a waveform type then accessing the values from the waveform would be more complex as well as if the resulting calculation was also to be a waveform (I suspect it would be slower too).  The above code is completely untested and hasn't been run but if someone can run it and send the results, that would be appreciated -- my guess is it will be at least an order of magnitude slower than anything else.
+
+### Comparision between ACE/TCL and Julia
+
+1. The speed will be prohibitively slow.  The calculation may take longer than running the whole simulation.
+
+2. The ACE/TCL version is very difficult to write because the user must know how to write both TCL and ACE/TCL.  `sx_equation` is needed because TCL's math processing is too limited but then `sx_equation` has no `for` loops or control flow so the user must also know TCL.  
+
+3. The new user-defined `DFT` function is not available in `sx_equation` because `sx_equation` doesn't know about it.  There are other ACE/TCL functions for registering a user-defined function into `sx_equation` but the are buggy and don't work realiably.
+
+4. The error messages from ACE/TCL are typically unhelpful, often referencing the line of the top-most `proc` and not enough information to do debugging.
+
+5. If the user wanted to write the formula in `exp(-2*pi*j*n*k/N)` form does the `exp` in `sx_equation` handle complex numbers?
 """
 
 # ╔═╡ 3e48d6b3-3bf6-4d2e-a6d1-8ad3db80fc1a
 md"""
-## SKILL Implementation
+## Cadence SKILL
 
 > **Note:** If you have access to SKILL and create an implementation, please let me know (see below).
 """
 
 # ╔═╡ c12c124c-62e8-4a57-a46a-0b1a44f14571
 md"""
-## MATLAB Implementation
+## MATLAB
 
 > **Note:** If you have access to MATLAB and create an implementation, please let me know (see below).
 """
 
 # ╔═╡ 0532bbb3-428e-4d32-876e-af92c1c7bb01
 md"""
-## Getting in contact
+# Getting in contact
 
 If you have any comments or suggestions, please let me know at `hertz` at `juliacomputing.com`.  I'd really appreciate examples from other programming languages common in EDA.  
 
 
 If you are interested in using Julia in your company then reach out for technical support, professional services or engineering/EDA design software.  See more info at [juliacomputing.com](https://juliacomputing.com/).  We enable engineers to be more productive.
 
-## Appendix
+# Appendix
 
 1. This site was written in [Pluto](https://github.com/fonsp/Pluto.jl) which is an interactive Julia environment in a web browser.
 
@@ -527,7 +590,7 @@ If you are interested in using Julia in your company then reach out for technica
 # ╠═8350eed7-0e88-4055-8060-49bf8931c84e
 # ╟─db8c90c4-dba7-44b1-a2d5-4ee5756667c2
 # ╠═bce85b30-df7f-4697-a9d6-2c2c281f5a4c
-# ╠═418d36e3-0d7a-4b8a-aef6-ea0704e72320
+# ╟─418d36e3-0d7a-4b8a-aef6-ea0704e72320
 # ╟─485c624a-d950-46b5-8ed6-b0a100ae5008
 # ╠═cb7a88cb-5f29-4feb-9560-e77013967dcd
 # ╠═0f771326-6994-40a3-86c8-7dc49256d634
@@ -566,6 +629,7 @@ If you are interested in using Julia in your company then reach out for technica
 # ╟─e62a71a3-7c54-4390-9263-5e6e55e70718
 # ╠═527585d1-e9c7-42ad-aa1c-e443772f522c
 # ╟─f1dd33f2-744f-4288-92ab-7ff54108dd05
+# ╟─c20504f8-56a6-47f6-9bd8-29c127c860f6
 # ╟─3e48d6b3-3bf6-4d2e-a6d1-8ad3db80fc1a
 # ╟─c12c124c-62e8-4a57-a46a-0b1a44f14571
 # ╟─0532bbb3-428e-4d32-876e-af92c1c7bb01
