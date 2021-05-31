@@ -119,21 +119,6 @@ md"""
 >**Note:** the **`2000`** point DFT must execute the loop `2000*2000` or **4 million** times.  Each loop has about 6 multiplies, 1 divide, and 1 `exp` of an imaginary number.  `exp` is a large function so it is hard to know how many operations are needed.  Fortunately, Julia can tell us by using the [GFlops.jl](https://github.com/triscale-innov/GFlops.jl) package.  It reports about 90 FLOPs per iteration so that is about **400 million** FLOPs for the complete DFT.
 """
 
-# ╔═╡ e22aded1-cf5b-43ae-a923-fedca30f0fec
-md"""
-### Improved Julia version
-
-Julia has optimized functions that are common in engineering but are not found in most programming languages.
-
-In this case we can use the `cispi` function which is the same as:
-
-$$\mathrm{cispi}(x) = \cos(\pi x) + \texttt{i} \sin(\pi x) = e^{\texttt{i} \pi x}$$
-
-where `i` is imaginary.  `cispi(x)` is a faster version of `exp(im*pi*x)` (see [Wikipedia](https://en.wikipedia.org/wiki/Cis_(mathematics)) for more info).
-
-So let's rewrite the DFT with `cispi`:
-"""
-
 # ╔═╡ 2ed07614-1715-4646-a09c-c7653a0102db
 function DFT2(x)
 	N = length(x)
@@ -170,6 +155,21 @@ dft1 ≈ dft2
 # ╔═╡ 8350eed7-0e88-4055-8060-49bf8931c84e
 t_julia2 = @belapsed DFT2(vsin)
 
+# ╔═╡ e22aded1-cf5b-43ae-a923-fedca30f0fec
+md"""
+### Improved Julia version (`cos` and `sin` = $(round(t_julia/t_julia2, sigdigits=2))x faster)
+
+Julia has optimized functions that are common in engineering but are not found in most programming languages.
+
+In this case we can use the `cispi` function which is the same as:
+
+$$\mathrm{cispi}(x) = \cos(\pi x) + \texttt{i} \sin(\pi x) = e^{\texttt{i} \pi x}$$
+
+where `i` is imaginary.  `cispi(x)` is a faster version of `exp(im*pi*x)` (see [Wikipedia](https://en.wikipedia.org/wiki/Cis_(mathematics)) for more info).
+
+So let's rewrite the DFT with `cispi`:
+"""
+
 # ╔═╡ 418d36e3-0d7a-4b8a-aef6-ea0704e72320
 md"""
 > **Note:** above the `≈` operater checks for approximately equal (within floating point round-off error).  It can be typed with `\approx<tab>`.
@@ -197,12 +197,41 @@ t_julia3 = @belapsed DFT2(vsin_0)
 # ╔═╡ c35ce815-f1b9-4367-9f81-b2bd51850b12
 md"""The 0-based index version took $(round(t_julia3, sigdigits=3)) seconds which is $(round(t_julia2/t_julia3, sigdigits=2))x faster than the previous version."""
 
-# ╔═╡ b4b92f64-276f-4bdb-8b68-23406efc774a
+# ╔═╡ 40a76500-fb57-408f-baf2-032be784e7f0
+function DFT2_threads(x)
+	N = length(x)
+    Hₖ = Vector{Complex{Float64}}(undef, N) # pre-allocate for thread-safety
+    Threads.@threads for k in 0:N-1
+        hₖ = 0.0 + im*0.0
+        for n in 0:N-1
+            hₖ += x[n+1]*cispi(-2n*k/N)
+        end
+        Hₖ[k+1] = hₖ
+    end
+    Hₖ
+end
+
+# ╔═╡ ba63aff4-f0f0-4f0d-acc7-7ce7d3ab60a4
+dft2_threads = DFT2_threads(vsin)
+
+# ╔═╡ ee637fb0-dba2-47fb-8cc2-117ad23cd5a6
+t_julia2_threads = @belapsed DFT2_threads(vsin)
+
+# ╔═╡ 4a4e3b04-6e00-46fb-a9b8-8a3ca06d9cf4
 md"""
-## Python Implementation
+### Improved multi-threaded Julia version ($(Threads.nthreads()) CPUs = $(round(t_julia2/t_julia2_threads, sigdigits=2))x)
 
-We will use the `PyCall` package to call Python from Julia
+Julia is a bit unique in that it has built-in support for multi-threading.  To do so Julia must be started with `julia --threads N` and then put `Threads.@threads` before the `for` loop.  We will write it in a similar fashion to the final form for the other languages for comparision: 
+"""
 
+# ╔═╡ bb67d192-27e9-49e7-9853-202f498e6f46
+dft2_threads ≈ dft2
+
+# ╔═╡ c662aae3-fcd5-48dc-9e7c-fbbcbaf65e51
+md"""
+With using $(Threads.nthreads()) threads it finished in $(round(t_julia2_threads, sigdigits=3)) seconds which is $(round(t_julia2/t_julia2_threads, sigdigits=2))x faster than the `DFT2` Julia version without threads.
+
+So with Julia, not only can you get really fast and easy to write code but it is also easy to make it multi-threaded and achieve close to linear CPU scaling with minimal effort.
 """
 
 # ╔═╡ 470dfa78-66c8-40a7-90dd-749667244207
@@ -225,20 +254,22 @@ md"""> **Note:** It took a while to figure out how to handle complex numbers and
 t_python = @elapsed dftpy = DFT_py(vsin) # this takes a long time to run (eg > 10 seconds)
 
 
+# ╔═╡ b4b92f64-276f-4bdb-8b68-23406efc774a
+md"""
+## Python Implementation ($(round(Int, t_python/t_julia2_threads))x slower)
+
+We will use the `PyCall` package to call Python from Julia
+
+"""
+
 # ╔═╡ bb6d5b1c-9382-43ed-8725-c0ab1b513479
 md"""
-The Python version takse too long to run so `@belapsed` isn't used to run it over and over.  It took $(round(t_python, sigdigits=3)) seconds which is $(round(t_python/t_julia2, sigdigits=2))x slower than Julia.  Let's check if they are equal:
+The Python version takse too long to run so `@belapsed` isn't used to run it over and over.  It took $(round(t_python, sigdigits=3)) seconds which is $(round(Int, t_python/t_julia2_threads))x slower than the multi-threaded Julia version.  Let's check if they are equal:
 """
 
 
 # ╔═╡ 1f084504-4f3a-4eb9-a4b9-b12b3c154497
-dftpy ≈ dft1
-
-# ╔═╡ 22de6bec-5774-40e4-9685-9347de93b21b
-md""" ### Improved Numpy version
-
-We will write the same algorithm using Numpy.
-"""
+dftpy ≈ dft2_threads
 
 # ╔═╡ 55ed8230-7ab1-41dd-9337-01b7720791ac
 begin
@@ -261,15 +292,60 @@ vsin_numpy = PyObject(vsin)
 # ╔═╡ 01b86d4e-d9f2-42cb-9c8c-f52cab1f4d31
 t_numpy = @elapsed dftnumpy = DFT_numpy(vsin_numpy) 
 
+# ╔═╡ 22de6bec-5774-40e4-9685-9347de93b21b
+md""" ### Improved Numpy version ($(round(Int, t_numpy/t_julia2_threads))x slower)
+
+We will write the same algorithm using Numpy.
+"""
+
 # ╔═╡ f0a5520a-c48d-424d-a12a-7d80f51a8071
 md"""
-The Numpy version took $(round(t_numpy, sigdigits=3)) seconds which is $(round(t_numpy/t_python, sigdigits=3))x slower than the regular Python version.  So the speed-up with using Numpy is only for vectorized operations.
+The Numpy version took $(round(t_numpy, sigdigits=3)) seconds which is $(round(t_numpy/t_python, sigdigits=2))x slower than the regular Python version.  So the speed-up with using Numpy is only for vectorized operations.
 
 Let's check if they are equal:
 """
 
 # ╔═╡ 4bdb81af-7520-46ae-a151-90446ac4be61
 dftnumpy ≈ dftpy
+
+# ╔═╡ b7e7511a-0d0a-4b63-afdc-0c8de4352ff8
+begin
+	py"""
+	import math
+	def DFT_sincos_py(x):
+		N = len(x)
+		Hk = []
+		for k in range(0,N):
+			sum_real = 0.0
+			sum_imag = 0.0
+			for n in range(0,N):
+				sum_real += x[n]*math.cos(-2*math.pi*n*k/N)
+				sum_imag += x[n]*math.sin(-2*math.pi*n*k/N)
+			Hk.append(complex(sum_real, sum_imag))
+		return Hk
+	"""
+	DFT_sincos_py = py"DFT_sincos_py"  # copy python function over so it exists on the Julia side
+	
+end
+
+# ╔═╡ cac67f07-f3ca-49de-b3df-d4f7c8b71a4c
+t_python2 = @elapsed dft2py = DFT_sincos_py(vsin)
+
+# ╔═╡ 869b8945-3cc9-457f-a3cf-5cca441db802
+md"""
+### Python with `cos` and `sin` ($(round(Int, t_python2/t_julia2_threads))x slower)
+
+Because Julia can use `cis` instead of `exp`, let's create a similar Python version:
+
+"""
+
+# ╔═╡ 498a0aff-8879-447d-85f2-35dc10e5aae7
+dft2py ≈ dft1
+
+# ╔═╡ 5f078b8e-4068-44c8-932f-db769cbee742
+md"""
+This Python version finished in $(round(t_python2, sigdigits=2)) seconds which is $(round(t_python/t_python2, sigdigits=2))x faster than the `exp` version of Python and $(round(Int, t_python2/t_julia2_threads))x slower than comparable (multi-threaded) Julia version.
+"""
 
 # ╔═╡ 2a5cdcfc-3d72-458d-8a1a-471d7e2196a9
 md"""
@@ -291,7 +367,9 @@ md"""
 
 3. The `exp` function is generic in that it can accept reals, complex numbers and matrices.  In Python, for complex arguments `cmath.exp` is needed while for real arguments `math.exp` is needed (or `numpy.exp` for numpy).  Therefore it is harder for the user to write generic functions built on top of `exp`.  In Julia functions are generic with no loss in performance or additional complexity for the user.
 
-4. In this case, Julia is **$(round(t_python/t_julia3, sigdigits=3))x** faster than Python.  Often an interative loop is the easiest to write an algorithm but if the code is too slow then Python users will try to rewrite the algorithm in a vectorized form to speed things up with Numpy.  Performance isn't an issue...until it is...and then requires extra time and expertise to use other plug-in libraries.
+4. In this case, Julia is **$(round(Int, t_python2/t_julia2_threads))x** faster than pure Python (both using `cos` and `sin`).  Often an interative loop is the easiest to write an algorithm but if the code is too slow then Python users will try to rewrite the algorithm in a vectorized form to speed things up with Numpy.  Performance isn't an issue...until it is...and then requires extra time and expertise to use other plug-in libraries.
+
+4. The multi-threaded version of Julia with $(Threads.nthreads()) threads was $(round(t_julia2/t_julia2_threads, sigdigits=2))x faster than without threads.  It was very painless to do this.  Python has a dozen or so libraries which support a subset of the Python language to speed things up in various ways but it is a big sacrifice in usablity and generality.  Looking at numerical computing code in Python they are usually a mix of C, Fortran and Cython.  Most engineers are not going to want to write a build system to do this and learn 1 or 2 more languages.
 
 5. Julia supports broadcasting generically so a function like `exp` can be distributed over a vector `x` like so `exp.(x)`.  This applies to all functions and makes for much easier development and usability.  To take the `exp` of a matrix use `exp(matrix)` (which is not the same as taking the `exp` of each element of the matrix with `exp.(matrix)`.
 
@@ -377,9 +455,11 @@ t_tcl = 3.858
 md"""
 ### Comparision between TCL, Julia and Python
 
-1. It was very difficult to write this function.  TCL doesn't support complex numbers and the code in TCL is unlike any math textbook.  Instead of a 2 line function it is 14 lines and is much less usable.
+1. It was very difficult to write the DFT in TCL.  TCL doesn't support complex numbers and the code in TCL is unlike any math textbook.  Instead of a 2 line function it is 14 lines and is much less usable.
 
-2. I made many errors trying to get it to work and couldn't understand the error messages.  It turned out I had missed putting the `$` in front of a variable name in some places and it gave weird error messages that were referencing lines far away from the actual issue.  
+2. In this case at least, TCL is a bit faster than pure Python.  But being that TCL doesn't support complex numbers it wouldn't make sense to use TCL.
+
+2. I made many errors trying to get the TCL version to work and couldn't understand the error messages.  It turned out I had missed putting the `$` in front of a variable name and it gave weird error messages that were referencing lines far away from the actual issue.  
 
 3. TCL does integer division so `1/4` equals `0` (not `0.25`).  I had to make sure to do `/double($N)` to get regular division.  These are the sorts of things that can easily cause code to break (say a user passed in an integer) in non-obvious ways and lead to long debugging sessions.  I've seen this bug in production code where the Verilog-A compiler (written in C which also does integer division) was doing `V/R` but the resistance was an integer and the programmer forgot to convert it to a real and the bug was in the field many years before it could be tracked down. 
 
@@ -389,83 +469,7 @@ md"""
 
 6. TCL doesn't have math as part of its syntax.  Math syntax is handled specifically by the `expr` function.  I don't know of a way to use my newly created `dft` function along with the `expr` function so I can use it in other math expressions.  User defined math functions in TCL are not composable.
 
-7. The run time of $t_tcl seconds was $(round(t_tcl/t_julia3, sigdigits=3))x slower than Julia and $(round(t_python/3.858, sigdigits=3))x faster than Python.  A bit surprising to that TCL was faster than Python.  Could converting complex `exp` to `sin` and `cos` be a lot faster?  Julia got $(round(t_julia/t_julia2, sigdigits=2))x faster when using `cispi` and looking at the [implementation](https://github.com/JuliaLang/julia/blob/6aaedecc447e3d8226d5027fb13d0c3cbfbfea2a/base/complex.jl#L563-L566) it calls `sincospi` which is a similar to calling `cos` and `sin` separately but a bit faster when `sin` and `cos` are calculated simultaneously.  So Python and TCL are probably pretty similar for speed.  But TCL doesn't support complex numbers so it isn't a fair comparision as someone who needed complex numbers wouldn't want to use TCL. 
-"""
-
-# ╔═╡ 869b8945-3cc9-457f-a3cf-5cca441db802
-md"""
-### Python revisited
-
-It is a bit unsettling to not do the equivalent Python version of the TCL implementation.  Let's see how fast Python is using the same algorithm as TCL:
-
-"""
-
-# ╔═╡ b7e7511a-0d0a-4b63-afdc-0c8de4352ff8
-begin
-	py"""
-	import math
-	def DFT_sincos_py(x):
-		N = len(x)
-		Hk = []
-		for k in range(0,N):
-			sum_real = 0.0
-			sum_imag = 0.0
-			for n in range(0,N):
-				sum_real += x[n]*math.cos(-2*math.pi*n*k/N)
-				sum_imag += x[n]*math.sin(-2*math.pi*n*k/N)
-			Hk.append(complex(sum_real, sum_imag))
-		return Hk
-	"""
-	DFT_sincos_py = py"DFT_sincos_py"  # copy python function over so it exists on the Julia side
-	
-end
-
-# ╔═╡ cac67f07-f3ca-49de-b3df-d4f7c8b71a4c
-t_python2 = @elapsed dft2py = DFT_sincos_py(vsin)
-
-# ╔═╡ 498a0aff-8879-447d-85f2-35dc10e5aae7
-dft2py ≈ dft1
-
-# ╔═╡ 5f078b8e-4068-44c8-932f-db769cbee742
-md"""
-This Python version finished in $(round(t_python2, sigdigits=2)) seconds which is $(round(t_python/t_python2, sigdigits=2))x faster than the `exp` version of Python, $(round(t_python2/t_tcl, sigdigits=2))x slower than TCL, and $(round(t_python2/t_julia2, sigdigits=2))x slower than Julia.  So it seems, in this case at least, TCL is a bit faster than pure Python.  But being that TCL doesn't support complex numbers it wouldn't make sense to use TCL.
-"""
-
-# ╔═╡ 4a4e3b04-6e00-46fb-a9b8-8a3ca06d9cf4
-md"""
-### Julia revisited (multi-threading)
-
-Let's compare the above calculation with Julia too but Julia is a bit unique in that it has built-in support for multi-threading.  To do so Julia must be started with `julia --threads N` and then put `Threads.@threads` before the `for` loop: 
-"""
-
-# ╔═╡ 40a76500-fb57-408f-baf2-032be784e7f0
-function DFT2_threads(x)
-	N = length(x)
-    Hₖ = Vector{Complex{Float64}}(undef, N) # pre-allocate for thread-safety
-    Threads.@threads for k in 0:N-1
-        hₖ = 0.0 + im*0.0
-        for n in 0:N-1
-            hₖ += x[n+1]*cispi(-2n*k/N)
-        end
-        Hₖ[k+1] = hₖ
-    end
-    Hₖ
-end
-
-# ╔═╡ ba63aff4-f0f0-4f0d-acc7-7ce7d3ab60a4
-dft2_threads = DFT2_threads(vsin)
-
-# ╔═╡ ee637fb0-dba2-47fb-8cc2-117ad23cd5a6
-t_dft2_threads = @belapsed DFT2_threads(vsin)
-
-# ╔═╡ bb67d192-27e9-49e7-9853-202f498e6f46
-dft2_threads ≈ dft2
-
-# ╔═╡ c662aae3-fcd5-48dc-9e7c-fbbcbaf65e51
-md"""
-With using $(Threads.nthreads()) threads it finished in $(round(t_dft2_threads, sigdigits=3)) seconds which is $(round(t_julia2/t_dft2_threads, sigdigits=2))x faster than the `DFT2` Julia version without threads.
-
-So with Julia, not only can you get really fast and easy to write code but it is also easy to make it multi-threaded and achieve close to linear CPU scaling with minimal effort.
+7. The run time of $t_tcl seconds was $(round(Int, t_tcl/t_julia2_threads))x slower than Julia and $(round(t_python2/3.858, sigdigits=2))x faster than Python.  A bit surprising to that TCL was faster than Python.  But TCL doesn't support complex numbers so it isn't a fair comparision as someone who needed complex numbers wouldn't want to use TCL.
 """
 
 # ╔═╡ 3e48d6b3-3bf6-4d2e-a6d1-8ad3db80fc1a
@@ -523,7 +527,7 @@ If you are interested in using Julia in your company then reach out for technica
 # ╠═8350eed7-0e88-4055-8060-49bf8931c84e
 # ╟─db8c90c4-dba7-44b1-a2d5-4ee5756667c2
 # ╠═bce85b30-df7f-4697-a9d6-2c2c281f5a4c
-# ╟─418d36e3-0d7a-4b8a-aef6-ea0704e72320
+# ╠═418d36e3-0d7a-4b8a-aef6-ea0704e72320
 # ╟─485c624a-d950-46b5-8ed6-b0a100ae5008
 # ╠═cb7a88cb-5f29-4feb-9560-e77013967dcd
 # ╠═0f771326-6994-40a3-86c8-7dc49256d634
@@ -532,6 +536,12 @@ If you are interested in using Julia in your company then reach out for technica
 # ╠═3f6c22d2-aefd-4b3e-bdc5-09b15a02a516
 # ╠═2e9845bc-a6ad-4b12-962f-35d1def78e64
 # ╟─c35ce815-f1b9-4367-9f81-b2bd51850b12
+# ╟─4a4e3b04-6e00-46fb-a9b8-8a3ca06d9cf4
+# ╠═40a76500-fb57-408f-baf2-032be784e7f0
+# ╠═ba63aff4-f0f0-4f0d-acc7-7ce7d3ab60a4
+# ╠═ee637fb0-dba2-47fb-8cc2-117ad23cd5a6
+# ╠═bb67d192-27e9-49e7-9853-202f498e6f46
+# ╟─c662aae3-fcd5-48dc-9e7c-fbbcbaf65e51
 # ╟─b4b92f64-276f-4bdb-8b68-23406efc774a
 # ╠═3be5aa2a-92b2-4dbe-a9ff-bfafa2f6ecb0
 # ╠═470dfa78-66c8-40a7-90dd-749667244207
@@ -547,21 +557,15 @@ If you are interested in using Julia in your company then reach out for technica
 # ╠═01b86d4e-d9f2-42cb-9c8c-f52cab1f4d31
 # ╟─f0a5520a-c48d-424d-a12a-7d80f51a8071
 # ╠═4bdb81af-7520-46ae-a151-90446ac4be61
-# ╟─2a5cdcfc-3d72-458d-8a1a-471d7e2196a9
-# ╟─e62a71a3-7c54-4390-9263-5e6e55e70718
-# ╠═527585d1-e9c7-42ad-aa1c-e443772f522c
-# ╟─f1dd33f2-744f-4288-92ab-7ff54108dd05
-# ╟─869b8945-3cc9-457f-a3cf-5cca441db802
+# ╠═869b8945-3cc9-457f-a3cf-5cca441db802
 # ╠═b7e7511a-0d0a-4b63-afdc-0c8de4352ff8
 # ╠═cac67f07-f3ca-49de-b3df-d4f7c8b71a4c
 # ╠═498a0aff-8879-447d-85f2-35dc10e5aae7
 # ╟─5f078b8e-4068-44c8-932f-db769cbee742
-# ╟─4a4e3b04-6e00-46fb-a9b8-8a3ca06d9cf4
-# ╠═40a76500-fb57-408f-baf2-032be784e7f0
-# ╠═ba63aff4-f0f0-4f0d-acc7-7ce7d3ab60a4
-# ╠═ee637fb0-dba2-47fb-8cc2-117ad23cd5a6
-# ╠═bb67d192-27e9-49e7-9853-202f498e6f46
-# ╟─c662aae3-fcd5-48dc-9e7c-fbbcbaf65e51
+# ╟─2a5cdcfc-3d72-458d-8a1a-471d7e2196a9
+# ╟─e62a71a3-7c54-4390-9263-5e6e55e70718
+# ╠═527585d1-e9c7-42ad-aa1c-e443772f522c
+# ╟─f1dd33f2-744f-4288-92ab-7ff54108dd05
 # ╟─3e48d6b3-3bf6-4d2e-a6d1-8ad3db80fc1a
 # ╟─c12c124c-62e8-4a57-a46a-0b1a44f14571
 # ╟─0532bbb3-428e-4d32-876e-af92c1c7bb01
