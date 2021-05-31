@@ -103,7 +103,7 @@ dft1 = DFT(vsin)
 
 # ╔═╡ adc93d58-0dce-4c6e-b100-e93ca481f53c
 md"""
-For measuring the run time accurately we will use the `BenchmarkTools` packages which re-runs the code over and over and measures the minimum time.
+> **Note:** For measuring the run time accurately we will use the `BenchmarkTools` packages which re-runs the code over and over to reduce the noise.
 """
 
 # ╔═╡ 4394b038-a5e5-4054-8bbb-b78d49329f00
