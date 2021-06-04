@@ -571,7 +571,7 @@ md"""
 
 # ╔═╡ 08bc918d-3c42-4d34-b4ea-7927fea3a2dc
 begin
-	slow(x) = string(round(t_python2/x, sigdigits=2), "x")
+	slow(x) = (m=round(t_python2/x, sigdigits=2); string(m >= 10 ? round(Int, m) : m, "x"))
 	sec(x) = round(x, sigdigits=3)
 md"""
 # Summary
@@ -596,20 +596,20 @@ To summarize these are the run times (using the Python `sin` `cos` version as a 
 	
 Looking at comparison of other factors the ratings are from `0` (not available) to `10` (great support) for how closely the language resembles an engineering textbook (as a proxy for ease of use).
 	
-| Ease of use aspect | Julia | Python | TCL |
-|:-------|:-----:|:------:|:---:|
-|Basic math syntax (`f(x) = 3x² + 5`) | 8 | 5 | 1 |
-|Imaginary numbers (`3 + j4`) | 9 | 7 | 0 |
-|Constants like `pi`, `π`, `ℯ`       | 10 | 7  | 1 |
-|Math notation for names (`Hₖ`, `h̅`, etc.)  | 10 | ? | ? |
-|Real division (`1/4 = 0.25`) | 10 | 10 | 4 |
-|Floating point approximately equal (`≈`) | 10 | 2 | 1 |
-|Indexing syntax (`x[n]`) | 10 | 10 | 1 |
-|One line `for` loops | 8 | 8 | 0 |
-|Element-by-element operations (`abs.(vec)`) | 8 | 2 | 0 |
-|Generic functions (`exp` of complex, reals)     | 10 | 2  | 0 |
-|User extendable generic functions | 10 | 2  | 0 |
-|Error message quality | 8 | 9 | 2 |
+| Ease of use aspect | Julia | Python | TCL | ACE |
+|:-------|:-----:|:------:|:---:|:---:|
+|Basic math syntax (`f(x) = 3x² + 5`) | 8 | 5 | 1 | 3 |
+|Imaginary numbers (`3 + j4`) | 9 | 7 | 0 | 4 |
+|Constants like `pi`, `π`, `ℯ`       | 10 | 7  | 1 | 2 |
+|Math notation for names (`Hₖ`, `h̅`, etc.)  | 10 | ? | ? | ? |
+|Real division (`1/4 = 0.25`) | 10 | 10 | 4 | 10 |
+|Floating point approximately equal (`≈`) | 10 | 2 | 1 | 1 |
+|Indexing syntax (`x[n]`) | 10 | 10 | 1 | 1 |
+|One line `for` loops | 8 | 8 | 0 | 0 |
+|Element-by-element operations (`abs.(vec)`) | 8 | 2 | 0 | 2 |
+|Generic functions (`exp` of complex, reals)     | 10 | 2  | 0 | 0 |
+|User extendable generic functions | 10 | 2  | 0 | 0 |
+|Error message quality | 8 | 9 | 3 | 1 |
 	
 """	
 
