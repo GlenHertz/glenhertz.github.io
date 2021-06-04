@@ -569,6 +569,30 @@ md"""
 	If you have access to MATLAB and create an implementation, please let me know (see below).
 """
 
+# ╔═╡ 08bc918d-3c42-4d34-b4ea-7927fea3a2dc
+begin
+	slow(x) = string(round(t_python2/x, sigdigits=2), "x")
+	sec(x) = round(x, sigdigits=3)
+md"""
+# Summary
+
+To summarize these are the run times (using the Python `sin` `cos` version as a baseline):
+
+| Language | Implementation | Run time (s)             |  Speed-up (x)  |
+|:---------|:---------------|:------------------------:|:----------:|
+| Julia  |`cispi` 4CPU | $(sec(t_julia2_threads)) | $(slow(t_julia2_threads)) |
+| Julia  |`cispi` (1CPU) | $(sec(t_julia2)) | $(slow(t_julia2)) |
+| Julia  |`cispi` (0-based) | $(sec(t_julia3)) | $(slow(t_julia3)) |
+| Python | `sin` `cos` | $(sec(t_python2)) | $(slow(t_python2)) |
+| TCL    | `sin` `cos` | $(sec(t_tcl)) | $(slow(t_tcl)) |
+| Julia  |`exp` | $(sec(t_julia)) | $(slow(t_julia)) |
+| Python |`exp` | $(sec(t_python)) | $(slow(t_python)) |
+| Python | `exp` Numpy | $(sec(t_numpy)) | $(slow(t_numpy)) |
+| TCL    | `exp`      | NA | NA |
+	
+"""
+end
+
 # ╔═╡ 0532bbb3-428e-4d32-876e-af92c1c7bb01
 md"""
 # Getting in contact
@@ -653,4 +677,5 @@ If you are interested in using Julia in your company then reach out for technica
 # ╟─c20504f8-56a6-47f6-9bd8-29c127c860f6
 # ╟─3e48d6b3-3bf6-4d2e-a6d1-8ad3db80fc1a
 # ╟─c12c124c-62e8-4a57-a46a-0b1a44f14571
+# ╟─08bc918d-3c42-4d34-b4ea-7927fea3a2dc
 # ╟─0532bbb3-428e-4d32-876e-af92c1c7bb01
