@@ -576,6 +576,8 @@ begin
 md"""
 # Summary
 
+## Performance
+	
 To summarize these are the run times (using the Python `sin` `cos` version as a baseline):
 
 | Language | Implementation | Run time (s)             |  Speed-up (x)  |
@@ -590,7 +592,26 @@ To summarize these are the run times (using the Python `sin` `cos` version as a 
 | Python | `exp` Numpy | $(sec(t_numpy)) | $(slow(t_numpy)) |
 | TCL    | `exp`      | NA | NA |
 	
-"""
+## Ease of use
+	
+Looking at comparison of other factors the ratings are from `0` (not available) to `10` (great support) for how closely the language resembles an engineering textbook (as a proxy for ease of use).
+	
+| Ease of use aspect | Julia | Python | TCL |
+|:-------|:-----:|:------:|:---:|
+|Math multiplication syntax (`3x + 5`) | 10 | 5 | 3 |
+|One line `for` loops | 8 | 8 | 0 |
+|Element-by-element operations (`abs.(vec)`) | 10 | 2 | 0 |
+|Imaginary numbers (`3 + j4`) | 9 | 7 | 0 |
+|Constants like `pi`, `π`, `ℯ`       | 10 | 7  | 1 |
+|Math notation for names (`Hₖ`, `ĝ`, etc.)  | 10 | ? | ? |
+|Floating point approximately equal (`≈`) | 10 | 0 | 0 |
+|Real division (`1/4 = 0.25`) | 10 | 10 | 0 |
+|Generic functions (`exp` of complex, reals)     | 10 | 2  | 0 |
+|User extendable generic functions | 10 | 2  | 0 |
+|Error message quality | 8 | 9 | 2 |
+	
+"""	
+
 end
 
 # ╔═╡ 0532bbb3-428e-4d32-876e-af92c1c7bb01
