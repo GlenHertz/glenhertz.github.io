@@ -81,8 +81,11 @@ function DFT(x)
 end
 
 # ╔═╡ 4a8624aa-2dad-4ce1-8442-32ec454930d6
-md"""> **Note!** Julia uses `im` for the imaginary number and by default uses `1-based` indexing.  
-> To write `π` type `\pi<tab>`, for Euler's number type `\euler<tab>` or use `exp()`, and for `Hₖ` type `H\_k<tab>`."""
+md"""
+!!! note
+	Julia uses `im` for the imaginary number and by default uses `1-based` indexing.  
+
+	To write `π` type `\pi<tab>`, for Euler's number type `\euler<tab>` or use `exp()`, and for `Hₖ` type `H\_k<tab>`."""
 
 # ╔═╡ 9f4a2c5f-a8b7-4fbf-93a4-2bc129ae7207
 md"### Create some test data
@@ -97,7 +100,8 @@ vsin = sin.(2pi .* t)
 
 # ╔═╡ 883216a0-a527-4b7a-b266-b6b08e321c6c
 md"""
-> **Note:** Use "dot" broadcasting in Julia where any function can be executed element-by-element of the arguments inside.  Above `sin.` and `.*` operate element by element so it is like having a compact `for` loop to take the `sin` of each element of the vector passed to it.
+!!! note
+	Use "dot" broadcasting in Julia where any function can be executed element-by-element of the arguments inside.  Above `sin.` and `.*` operate element by element so it is like having a compact `for` loop to take the `sin` of each element of the vector passed to it.
 """
 
 # ╔═╡ ac8f9841-8bd3-4913-8773-95923761c969
@@ -108,7 +112,8 @@ dft1 = DFT(vsin)
 
 # ╔═╡ adc93d58-0dce-4c6e-b100-e93ca481f53c
 md"""
-> **Note:** For measuring the run time accurately we will use the `@belapsed` macro from the `BenchmarkTools` package which re-runs the code over and over to measure the elapsed time with reduced noise.
+!!! note
+	For measuring the run time accurately we will use the `@belapsed` macro from the `BenchmarkTools` package which re-runs the code over and over to measure the elapsed time with reduced noise.
 """
 
 # ╔═╡ 4394b038-a5e5-4054-8bbb-b78d49329f00
@@ -121,7 +126,8 @@ The basic Julia version finishes in **$(round(t_julia, sigdigits=4))** seconds
 
 # ╔═╡ c6c22775-9d3a-4cf8-ba84-df3e7ea51b03
 md"""
->**Note:** the **`2000`** point DFT must execute the loop `2000*2000` or **4 million** times.  Each loop has about 6 multiplies, 1 divide, and 1 `exp` of an imaginary number.  `exp` is a large function so it is hard to know how many operations are needed.  Fortunately, Julia can tell us by using the [GFlops.jl](https://github.com/triscale-innov/GFlops.jl) package.  It reports about 90 FLOPs per iteration so that is about **400 million** FLOPs for the complete DFT.
+!!! warning
+	The **`2000`** point DFT must execute the loop `2000*2000` or **4 million** times.  Each loop has about 6 multiplies, 1 divide, and 1 `exp` of an imaginary number.  `exp` is a large function so it is hard to know how many operations are needed.  Fortunately, Julia can tell us by using the [GFlops.jl](https://github.com/triscale-innov/GFlops.jl) package.  It reports about 90 FLOPs per iteration so that is about **400 million** FLOPs for the complete DFT.
 """
 
 # ╔═╡ 2ed07614-1715-4646-a09c-c7653a0102db
@@ -132,8 +138,6 @@ end
 
 # ╔═╡ db8c90c4-dba7-44b1-a2d5-4ee5756667c2
 md"""
-> **Note:** Julia supports __macros__ which start with **`@`** that allow users to write a function that takes code as input and can modify it.  The **`@elapsed`** function takes the code past to it and inserts a start and stop timer around the code to measure the excecution time.
-
 Let's check that the improved function returns the same result:
 """
 
@@ -177,14 +181,16 @@ So let's rewrite the DFT with `cispi`:
 
 # ╔═╡ 418d36e3-0d7a-4b8a-aef6-ea0704e72320
 md"""
-> **Note:** above the `≈` operater checks for approximately equal (within floating point round-off error).  It can be typed with `\approx<tab>`.
+!!! note
+	Above the `≈` operater checks for approximately equal (within floating point round-off error).  It can be typed with `\approx<tab>`.
 
 So the `cispi` version took $(round(t_julia2, sigdigits=3)) seconds.  It gets the same result and is $(round(t_julia/t_julia2, sigdigits=2))x faster.
 """
 
 # ╔═╡ fd7807ff-3a89-499e-937e-7550979145bd
 md"""
-> **Note:** This `DFT2` function definition specifies that the input must be an `OffsetVector`.  This allows users to write generic functions that can take different types of inputs yet run different code.  So by default `DFT2` will assume it is a regular vector (or any type since it does no type checking) but if an `OffsetVector` is passed to `DFT2` then the above method will be called instead.  Note how above the code Julia, it returns `DFT2 (generic function with 2 methods)`.
+!!! note
+	This `DFT2` function definition specifies that the input must be an `OffsetVector`.  This allows users to write generic functions that can take different types of inputs yet run different code.  So by default `DFT2` will assume it is a regular vector (or any type since it does no type checking) but if an `OffsetVector` is passed to `DFT2` then the above method will be called instead.  Note how above the code Julia, it returns `DFT2 (generic function with 2 methods)`.
 
 
 Now let's convert `vsin` into a 0-based index `OffsetVector`:
@@ -253,7 +259,11 @@ begin
 end
 
 # ╔═╡ 13196703-d411-4ad8-aa92-694812ab5508
-md"""> **Note:** It took a while to figure out how to handle complex numbers and `pi`.  The `math.exp` function doesn't work with complex numbers so `cmath.exp` had to be used instead.  It is clear that Python doesn't have good support for generics.  """
+md"""
+!!! note
+
+	It took a while to figure out how to handle complex numbers and `pi`.  The `math.exp` function doesn't work with complex numbers so `cmath.exp` had to be used instead.  It is clear that Python doesn't have good support for generics.
+"""
 
 # ╔═╡ 74abbc3f-784e-474c-bfdc-1e19718ca6cb
 t_python = @elapsed dftpy = DFT_py(vsin) # this takes a long time to run (eg > 10 seconds)
@@ -546,14 +556,17 @@ The above assumes the data passed to the `DFT` proc is a TCL list.  If it was a 
 md"""
 ## Cadence SKILL
 
-> **Note:** If you have access to SKILL and create an implementation, please let me know (see below).
+!!! note
+	If you have access to SKILL and create an implementation, please let me know (see below).
 """
 
 # ╔═╡ c12c124c-62e8-4a57-a46a-0b1a44f14571
 md"""
 ## MATLAB
 
-> **Note:** If you have access to MATLAB and create an implementation, please let me know (see below).
+!!! note
+
+	If you have access to MATLAB and create an implementation, please let me know (see below).
 """
 
 # ╔═╡ 0532bbb3-428e-4d32-876e-af92c1c7bb01
