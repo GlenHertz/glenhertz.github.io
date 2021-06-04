@@ -600,7 +600,7 @@ Looking at comparison of other factors the ratings are from `0` (not available) 
 |:-------|:-----:|:------:|:---:|
 |Math multiplication syntax (`3x + 5`) | 10 | 5 | 3 |
 |One line `for` loops | 8 | 8 | 0 |
-|Element-by-element operations (`abs.(vec)`) | 10 | 2 | 0 |
+|Element-by-element operations (`abs.(vec)`) | 7 | 2 | 0 |
 |Imaginary numbers (`3 + j4`) | 9 | 7 | 0 |
 |Constants like `pi`, `π`, `ℯ`       | 10 | 7  | 1 |
 |Math notation for names (`Hₖ`, `ĝ`, etc.)  | 10 | ? | ? |
