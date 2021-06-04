@@ -598,14 +598,15 @@ Looking at comparison of other factors the ratings are from `0` (not available) 
 	
 | Ease of use aspect | Julia | Python | TCL |
 |:-------|:-----:|:------:|:---:|
-|Math multiplication syntax (`3x + 5`) | 10 | 5 | 3 |
-|One line `for` loops | 8 | 8 | 0 |
-|Element-by-element operations (`abs.(vec)`) | 7 | 2 | 0 |
+|Basic math syntax (`f(x) = 3x² + 5`) | 8 | 5 | 3 |
 |Imaginary numbers (`3 + j4`) | 9 | 7 | 0 |
 |Constants like `pi`, `π`, `ℯ`       | 10 | 7  | 1 |
-|Math notation for names (`Hₖ`, `ĝ`, etc.)  | 10 | ? | ? |
-|Floating point approximately equal (`≈`) | 10 | 0 | 0 |
-|Real division (`1/4 = 0.25`) | 10 | 10 | 0 |
+|Math notation for names (`Hₖ`, `h̅`, etc.)  | 10 | ? | ? |
+|Real division (`1/4 = 0.25`) | 10 | 10 | 1 |
+|Floating point approximately equal (`≈`) | 10 | 2 | 1 |
+|Indexing syntax (`x[n]`) | 10 | 10 | 1 |
+|One line `for` loops | 8 | 8 | 0 |
+|Element-by-element operations (`abs.(vec)`) | 8 | 2 | 0 |
 |Generic functions (`exp` of complex, reals)     | 10 | 2  | 0 |
 |User extendable generic functions | 10 | 2  | 0 |
 |Error message quality | 8 | 9 | 2 |
