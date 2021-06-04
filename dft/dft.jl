@@ -598,11 +598,11 @@ Looking at comparison of other factors the ratings are from `0` (not available) 
 	
 | Ease of use aspect | Julia | Python | TCL |
 |:-------|:-----:|:------:|:---:|
-|Basic math syntax (`f(x) = 3x² + 5`) | 8 | 5 | 3 |
+|Basic math syntax (`f(x) = 3x² + 5`) | 8 | 5 | 1 |
 |Imaginary numbers (`3 + j4`) | 9 | 7 | 0 |
 |Constants like `pi`, `π`, `ℯ`       | 10 | 7  | 1 |
 |Math notation for names (`Hₖ`, `h̅`, etc.)  | 10 | ? | ? |
-|Real division (`1/4 = 0.25`) | 10 | 10 | 1 |
+|Real division (`1/4 = 0.25`) | 10 | 10 | 4 |
 |Floating point approximately equal (`≈`) | 10 | 2 | 1 |
 |Indexing syntax (`x[n]`) | 10 | 10 | 1 |
 |One line `for` loops | 8 | 8 | 0 |
