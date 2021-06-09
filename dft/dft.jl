@@ -127,7 +127,7 @@ The basic Julia version finishes in **$(round(t_julia, sigdigits=4))** seconds
 # ╔═╡ c6c22775-9d3a-4cf8-ba84-df3e7ea51b03
 md"""
 !!! warning
-	The **`2000`** point DFT must execute the loop `2000*2000` or **4 million** times.  Each loop has about 6 multiplies, 1 divide, and 1 `exp` of an imaginary number.  `exp` is a large function so it is hard to know how many operations are needed.  Fortunately, Julia can tell us by using the [GFlops.jl](https://github.com/triscale-innov/GFlops.jl) package.  It reports about 90 FLOPs per iteration so that is about **400 million** FLOPs for the complete DFT.
+	The **`2000`** point DFT must execute the loop `2000*2000` or **4 million** times.  Each loop has about 6 multiplies, 1 divide, and 1 `exp` of an imaginary number.  `exp` is a large function so it is hard to know how many operations are needed.  Fortunately, Julia can tell us by using the [GFlops.jl](https://github.com/triscale-innov/GFlops.jl) package.  It reports about 90 FLOPS per iteration so that is about **400 million** FLOPS for the complete DFT.
 """
 
 # ╔═╡ 2ed07614-1715-4646-a09c-c7653a0102db
