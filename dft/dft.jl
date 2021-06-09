@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.14.7
+# v0.14.8
 
 using Markdown
 using InteractiveUtils
@@ -571,6 +571,11 @@ md"""
 
 # ╔═╡ 08bc918d-3c42-4d34-b4ea-7927fea3a2dc
 begin
+	jl_ver = string(VERSION)
+	py"import sys
+	"
+	py_ver = split(py"sys.version")[1]
+	tcl_ver = "8.6.11"
 	slow(x) = (m=round(t_python2/x, sigdigits=2); string(m >= 10 ? round(Int, m) : m, "x"))
 	sec(x) = round(x, sigdigits=3)
 md"""
@@ -610,6 +615,15 @@ Looking at comparison of other factors the ratings are from `0` (not available) 
 |Generic functions (`exp` of complex, reals)     | 10 | 2  | 0 | 0 |
 |User extendable generic functions | 10 | 2  | 0 | 0 |
 |Error message quality | 8 | 9 | 3 | 1 |
+
+
+The following versions of the languages were used:
+
+| Language | Version  |
+|:---------|:--------:|
+| Julia    | $jl_ver  |
+| Python   | $py_ver  |
+| TCL      | $tcl_ver |
 	
 """	
 
