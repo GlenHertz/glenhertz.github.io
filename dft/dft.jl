@@ -90,7 +90,7 @@ md"""
 # ╔═╡ 9f4a2c5f-a8b7-4fbf-93a4-2bc129ae7207
 md"### Create some test data
 
-The test data is a simle 2000 point sinusoid...nothing special."
+The test data is a simple 2000 point sinusoid...nothing special."
 
 # ╔═╡ 38c57971-eabc-4ecf-948b-ffbcffdf517d
 t = range(0, stop=1, length=2000)
